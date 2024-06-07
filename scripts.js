@@ -13,6 +13,74 @@ const month = [
   "Декабрь 2024",
 ];
 
+function addFile() {
+  // addParentDir(JSON.parse(localStorage.getItem("dirTree")), {
+  //   parentDir: {
+  //     name: "Материалы",
+  //     child: [{}],
+  //   },
+  // });
+  const trIncomeItem = document.createElement("tr");
+  for (let i = 0; i <= month.length + 1; i += 1) {
+    const tdIncomeItem = document.createElement("td");
+    if (i === 0) {
+      tdIncomeItem.textContent = "Название статьи...";
+      tdIncomeItem.contentEditable = true;
+      tdIncomeItem.id = `incomeItemName${i}`;
+      tdIncomeItem.classList.add("nameCell");
+      tdIncomeItem.classList.add("level1");
+    } else {
+      tdIncomeItem.textContent = 0;
+      tdIncomeItem.contentEditable = true;
+      tdIncomeItem.id = `incomeItem${i}`;
+      tdIncomeItem.classList.add("valueCell");
+    }
+    trIncomeItem.appendChild(tdIncomeItem);
+  }
+  tbody.appendChild(trIncomeItem);
+  updateIncomeValue();
+}
+
+function addFolder() {
+  const trIncomeItem = document.createElement("tr");
+  for (let i = 0; i <= month.length + 1; i += 1) {
+    const tdIncomeItem = document.createElement("td");
+    if (i === 0) {
+      const p = document.createElement("p");
+      p.classList.add("iconContainer");
+      const imgPlus = document.createElement("img");
+      imgPlus.src = "./Icons/plus.png";
+      imgPlus.classList.add("icon");
+      imgPlus.addEventListener("click", addFile);
+      const imgFolder = document.createElement("img");
+      imgFolder.src = "./Icons/folder.png";
+      imgFolder.classList.add("icon");
+      imgFolder.addEventListener("click", addFolder);
+      const imgArrow = document.createElement("img");
+      imgArrow.src = "./Icons/mini-arrow.png";
+      tdIncomeItem.appendChild(imgArrow);
+      const span = document.createElement("span");
+      span.textContent = "Название группы...";
+      tdIncomeItem.appendChild(span);
+      tdIncomeItem.contentEditable = false;
+      tdIncomeItem.id = `incomeItemName${i}`;
+      tdIncomeItem.classList.add("nameCell");
+      tdIncomeItem.classList.add("level1");
+      p.appendChild(imgFolder);
+      p.appendChild(imgPlus);
+      tdIncomeItem.appendChild(p);
+    } else {
+      tdIncomeItem.textContent = 0;
+      tdIncomeItem.contentEditable = false;
+      tdIncomeItem.id = `incomeItem${i}`;
+      tdIncomeItem.classList.add("valueCell");
+    }
+    trIncomeItem.appendChild(tdIncomeItem);
+  }
+  tbody.appendChild(trIncomeItem);
+  updateIncomeValue();
+}
+
 let dirTree = [
   {
     parentDir: {
@@ -123,42 +191,21 @@ for (let i = 0; i <= month.length + 1; i += 1) {
     tdIncome.textContent = "Бюджет доходов";
     tdIncome.id = `incomeResultName${i}`;
     tdIncome.classList.add("mainCell");
+    const p = document.createElement("p");
+    p.classList.add("iconContainer");
     const imgPlus = document.createElement("img");
     imgPlus.src = "./Icons/plus.png";
-    imgPlus.classList.add("iconPlus");
-
-    imgPlus.addEventListener("click", function () {
-      // addParentDir(JSON.parse(localStorage.getItem("dirTree")), {
-      //   parentDir: {
-      //     name: "Материалы",
-      //     child: [{}],
-      //   },
-      // });
-      const trIncomeItem = document.createElement("tr");
-      for (let i = 0; i <= month.length + 1; i += 1) {
-        const tdIncomeItem = document.createElement("td");
-        if (i === 0) {
-          tdIncomeItem.textContent = "Название статьи...";
-          tdIncomeItem.contentEditable = true;
-          tdIncomeItem.id = `incomeItemName${i}`;
-          tdIncomeItem.classList.add("nameCell");
-        } else {
-          tdIncomeItem.textContent = 0;
-          tdIncomeItem.contentEditable = true;
-          tdIncomeItem.id = `incomeItem${i}`;
-          tdIncomeItem.classList.add("valueCell");
-        }
-        trIncomeItem.appendChild(tdIncomeItem);
-      }
-      tbody.appendChild(trIncomeItem);
-      updateIncomeValue();
-    });
+    imgPlus.classList.add("icon");
+    imgPlus.addEventListener("click", addFile);
 
     const imgFolder = document.createElement("img");
     imgFolder.src = "./Icons/folder.png";
-    imgFolder.classList.add("iconFolder");
-    tdIncome.appendChild(imgFolder);
-    tdIncome.appendChild(imgPlus);
+    imgFolder.classList.add("icon");
+    imgFolder.addEventListener("click", addFolder);
+
+    p.appendChild(imgFolder);
+    p.appendChild(imgPlus);
+    tdIncome.appendChild(p);
     trTitle.appendChild(tdIncome);
   } else {
     tdIncome.textContent = 0;

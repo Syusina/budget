@@ -13,18 +13,132 @@ const month = [
   "Декабрь 2024",
 ];
 
-function addFile() {
-  // addParentDir(JSON.parse(localStorage.getItem("dirTree")), {
-  //   parentDir: {
-  //     name: "Материалы",
-  //     child: [{}],
-  //   },
-  // });
+let dirTree = [
+  {
+    parentDir: {
+      name: "Бюджет доходов",
+      type: "FOLDER",
+      child: [
+        {
+          name: "Разработка проекта",
+          type: "FILE",
+        },
+        {
+          name: "Ремонтные работы",
+          type: "FILE",
+        },
+        {
+          name: "Услуги",
+          type: "FOLDER",
+          child: [
+            {
+              name: "Аудит и консалтинг",
+              type: "FILE",
+            },
+            {
+              name: "Работа электрика",
+              type: "FILE",
+            },
+            {
+              name: "Малярные работы",
+              type: "FILE",
+            },
+            {
+              name: "Доставка",
+              type: "FILE",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    parentDir: {
+      name: "Бюджет расходов",
+      type: "FOLDER",
+      child: [
+        {
+          name: "Материалы",
+          type: "FOLDER",
+          child: [
+            {
+              name: "Мебель",
+              type: "FOLDER",
+              child: [
+                {
+                  name: "Дерево",
+                  type: "FILE",
+                },
+                {
+                  name: "Стекло",
+                  type: "FILE",
+                },
+                {
+                  name: "Фурнитура",
+                  type: "FILE",
+                },
+              ],
+            },
+            {
+              name: "Химия",
+              type: "FOLDER",
+              child: [
+                {
+                  name: "Краска",
+                  type: "FILE",
+                },
+                {
+                  name: "Лак",
+                  type: "FILE",
+                },
+              ],
+            },
+            {
+              name: "Аренда инструмента",
+              type: "FILE",
+            },
+            {
+              name: "Аренда офиса",
+              type: "FILE",
+            },
+            {
+              name: "Коммунальные платежи",
+              type: "FILE",
+            },
+            {
+              name: "Транспорт",
+              type: "FILE",
+            },
+          ],
+        },
+      ],
+    },
+  },
+];
+
+localStorage.setItem("dirTree", JSON.stringify(dirTree));
+const data = JSON.parse(localStorage.getItem("dirTree"));
+
+function addParentDir(dirTree, newDir) {
+  dirTree.push(newDir);
+  localStorage.setItem("dirTree", JSON.stringify(dirTree));
+
+  return JSON.parse(localStorage.getItem("dirTree"));
+}
+
+// addParentDir(dirTree, {
+//   parentDir: {
+//     name: "Материалы",
+//     child: [{}],
+//   },
+// });
+
+function addFile(name) {
   const trIncomeItem = document.createElement("tr");
   for (let i = 0; i <= month.length + 1; i += 1) {
     const tdIncomeItem = document.createElement("td");
     if (i === 0) {
-      tdIncomeItem.textContent = "Название статьи...";
+      tdIncomeItem.textContent = name;
       tdIncomeItem.contentEditable = true;
       tdIncomeItem.id = `incomeItemName${i}`;
       tdIncomeItem.classList.add("nameCell");
@@ -39,6 +153,30 @@ function addFile() {
   }
   tbody.appendChild(trIncomeItem);
   updateIncomeValue();
+}
+
+function createFile(event) {
+  const tdIncome = event.target.closest("td");
+  const originalContent = tdIncome.innerHTML;
+  tdIncome.innerHTML = "";
+  tdIncome.contentEditable = true;
+  tdIncome.focus();
+  tdIncome.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      console.log(1);
+      event.preventDefault();
+      addFile(tdIncome.textContent);
+      tdIncome.contentEditable = false;
+    }
+  });
+  tdIncome.addEventListener("blur", function () {
+    console.log(2);
+    tdIncome.innerHTML = originalContent;
+    const imgPlus = tdIncome.querySelector("#iconPlus");
+    imgPlus.addEventListener("click", createFile);
+    const imgFolder = tdIncome.querySelector("#iconFolder");
+    imgFolder.addEventListener("click", addFolder);
+  });
 }
 
 function addFolder() {
@@ -80,56 +218,6 @@ function addFolder() {
   tbody.appendChild(trIncomeItem);
   updateIncomeValue();
 }
-
-let dirTree = [
-  {
-    parentDir: {
-      name: "Бюджет доходов",
-      child: [
-        {
-          name: "Folder #1",
-          type: "FOLDER",
-          child: [
-            {
-              name: "Folder #1 Child #1",
-              type: "FOLDER",
-              child: [
-                {
-                  name: "Folder #1 Child #1 Child #1",
-                  type: "FOLDER",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          name: "File #1",
-          type: "FILE",
-        },
-      ],
-    },
-  },
-  {
-    parentDir: {
-      name: "Услуги",
-      child: [{}],
-    },
-  },
-];
-
-function addParentDir(dirTree, newDir) {
-  dirTree.push(newDir);
-  localStorage.setItem("dirTree", JSON.stringify(dirTree));
-
-  return JSON.parse(localStorage.getItem("dirTree"));
-}
-
-// addParentDir(dirTree, {
-//   parentDir: {
-//     name: "Материалы",
-//     child: [{}],
-//   },
-// });
 
 const h2 = document.createElement("h2");
 h2.textContent = "Бюджет на 2024 год";
@@ -185,10 +273,11 @@ for (let i = 0; i <= month.length + 1; i += 1) {
 tbody.appendChild(trTitle);
 
 const trIncome = document.createElement("tr");
+const incomeData = data[0].parentDir;
 for (let i = 0; i <= month.length + 1; i += 1) {
   const tdIncome = document.createElement("td");
   if (i === 0) {
-    tdIncome.textContent = "Бюджет доходов";
+    tdIncome.textContent = incomeData.name;
     tdIncome.id = `incomeResultName${i}`;
     tdIncome.classList.add("mainCell");
     const p = document.createElement("p");
@@ -196,11 +285,12 @@ for (let i = 0; i <= month.length + 1; i += 1) {
     const imgPlus = document.createElement("img");
     imgPlus.src = "./Icons/plus.png";
     imgPlus.classList.add("icon");
-    imgPlus.addEventListener("click", addFile);
-
+    imgPlus.id = "iconPlus";
+    imgPlus.addEventListener("click", createFile);
     const imgFolder = document.createElement("img");
     imgFolder.src = "./Icons/folder.png";
     imgFolder.classList.add("icon");
+    imgFolder.id = "iconFolder";
     imgFolder.addEventListener("click", addFolder);
 
     p.appendChild(imgFolder);
@@ -217,49 +307,27 @@ for (let i = 0; i <= month.length + 1; i += 1) {
 }
 tbody.appendChild(trIncome);
 
-/// Статьи дохода 1
-const trIncomeItem = document.createElement("tr");
-for (let i = 0; i <= month.length + 1; i += 1) {
-  const tdIncomeItem = document.createElement("td");
-  if (i === 0) {
-    tdIncomeItem.textContent = "Статья доходов";
-    tdIncomeItem.id = `incomeItemName${i}`;
-    tdIncomeItem.classList.add("nameCell");
+incomeData.child.map((el) => {
+  const trIncomeItem = document.createElement("tr");
+  for (let i = 0; i <= month.length + 1; i += 1) {
+    const tdIncomeItem = document.createElement("td");
+    if (i === 0) {
+      tdIncomeItem.textContent = el.name;
+      tdIncomeItem.id = `incomeItemName${i}`;
+      tdIncomeItem.classList.add("nameCell");
 
-    trTitle.appendChild(tdIncomeItem);
-  } else {
-    tdIncomeItem.textContent = 0;
-    tdIncomeItem.contentEditable = true;
-    tdIncomeItem.id = `incomeItem${i}`;
-    tdIncomeItem.classList.add("valueCell");
-    trTitle.appendChild(tdIncomeItem);
+      trTitle.appendChild(tdIncomeItem);
+    } else {
+      tdIncomeItem.textContent = 0;
+      tdIncomeItem.contentEditable = true;
+      tdIncomeItem.id = `incomeItem${i}`;
+      tdIncomeItem.classList.add("valueCell");
+      trTitle.appendChild(tdIncomeItem);
+    }
+    trIncomeItem.appendChild(tdIncomeItem);
   }
-  trIncomeItem.appendChild(tdIncomeItem);
-}
-tbody.appendChild(trIncomeItem);
-///
-
-/// Статьи дохода 2
-const trIncomeItem1 = document.createElement("tr");
-for (let i = 0; i <= month.length + 1; i += 1) {
-  const tdIncomeItem = document.createElement("td");
-  if (i === 0) {
-    tdIncomeItem.textContent = "Статья доходов";
-    tdIncomeItem.id = `incomeItemName${i}`;
-    tdIncomeItem.classList.add("nameCell");
-
-    trTitle.appendChild(tdIncomeItem);
-  } else {
-    tdIncomeItem.textContent = 0;
-    tdIncomeItem.contentEditable = true;
-    tdIncomeItem.id = `incomeItem${i}`;
-    tdIncomeItem.classList.add("valueCell");
-    trTitle.appendChild(tdIncomeItem);
-  }
-  trIncomeItem1.appendChild(tdIncomeItem);
-}
-tbody.appendChild(trIncomeItem1);
-///
+  tbody.appendChild(trIncomeItem);
+});
 
 function updateIncomeValue() {
   for (let i = 1; i <= month.length + 1; i += 1) {

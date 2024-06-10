@@ -210,9 +210,10 @@ trPlan.append(...tdElements);
 const tbody = document.createElement("tbody");
 
 function renderDirectory(directory, parentElement, tbody, level) {
+  const trDir = document.createElement("tr");
+  trDir.id = `dir_${level}`;
   directory.forEach((item, index) => {
     const tr = document.createElement("tr");
-    tr.id = `dir_${level}`;
 
     const nameTd = document.createElement("td");
     const label = document.createElement("label");
@@ -298,8 +299,8 @@ function renderDirectory(directory, parentElement, tbody, level) {
       }
       tr.appendChild(td);
     }
-
-    tbody.appendChild(tr);
+    trDir.appendChild(tr);
+    tbody.appendChild(trDir);
 
     if (item.type === "FOLDER" && item.child) {
       renderDirectory(item.child, tr, tbody, level + 1);
@@ -307,8 +308,8 @@ function renderDirectory(directory, parentElement, tbody, level) {
   });
 }
 
+tbody.appendChild(trPlan);
 table.appendChild(thead);
-table.appendChild(trPlan);
 table.appendChild(tbody);
 tableContainer.appendChild(table);
 document.body.appendChild(h2);
@@ -316,10 +317,12 @@ document.body.appendChild(tableContainer);
 
 window.addEventListener("storage", function (event) {
   const data = JSON.parse(localStorage.getItem("dirTree"));
-  renderDirectory(data, tableContainer, tbody, 0);
+  const level = 0;
+  renderDirectory(data, tableContainer, tbody, level);
 });
 
-renderDirectory(data, tableContainer, tbody, 0);
+const level = 0;
+renderDirectory(data, tableContainer, tbody, level);
 
 const el0_1 = document.querySelectorAll("#el0_1");
 const sum = [...el0_1].reduce((acc, el) => acc + Number(el.dataset.value), 0);

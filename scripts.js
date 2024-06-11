@@ -1,15 +1,3 @@
-function hide() {
-  document.querySelectorAll("#btn-hide").forEach((el) => {
-    el.addEventListener("click", function (event) {
-      const parent = event.target.closest("tbody");
-      const arr = parent.querySelectorAll(".value");
-      arr.forEach((el) => {
-        el.classList.toggle("show");
-      });
-    });
-  });
-}
-
 const headTitleArray = [
   "Наименование",
   "Итог",
@@ -53,12 +41,12 @@ const dataInit = [
       {
         name: "Разработка проекта",
         type: "FILE",
-        price: [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         name: "Ремонтные работы",
         type: "FILE",
-        price: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         name: "Услуги",
@@ -107,7 +95,7 @@ const dataInit = [
           {
             name: "Работа электрика",
             type: "FILE",
-            price: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           },
           {
             name: "Ремонт1",
@@ -132,38 +120,66 @@ const dataInit = [
   },
 ];
 
+function hide() {
+  document.querySelectorAll("#btn-hide").forEach((el) => {
+    el.addEventListener("click", function (event) {
+      const parent = event.target.closest("tbody");
+      const arr = parent.querySelectorAll(".value");
+      arr.forEach((el) => {
+        el.classList.toggle("show");
+      });
+    });
+  });
+}
+
 function sum(event, level, index) {
   let enteredValue = event.target.textContent;
   const element = event.target;
   element.contentEditable = true;
   element.focus();
   element.textContent = "";
-  const parent = event.target.closest("tr").closest("tbody");
+  const parentTr = event.target.closest("tr");
+  const rowValue = parentTr.querySelectorAll("td.bodyValueCell");
+
+  const parentBody = event.target.closest("tr").closest("tbody");
   const parentTable = event.target.closest("tr").closest("table");
-  const cellsFile = parent.querySelectorAll(`#el_m${index}_l${level}`);
+  const cellsFile = parentBody.querySelectorAll(`#el_m${index}_l${level}`);
   const cellsFolders = parentTable.querySelectorAll(`#sum_m${index}_l${level}`);
 
   function handleKeyUp(e) {
     if (e.key === "Enter") {
       e.preventDefault();
+      enteredValue = event.target.textContent;
+      element.textContent = parseInt(enteredValue);
+      const tableCell = document.getElementById(`sum_m${index}_l${level - 1}`);
       let sum = 0;
       cellsFile.forEach((cell) => {
         sum += parseInt(cell.textContent);
       });
-      enteredValue = event.target.textContent;
-      element.textContent = parseInt(enteredValue);
-      const tableCell = document.getElementById(`sum_m${index}_l${level - 1}`);
+      cellsFolders.forEach((cell) => {
+        sum += parseInt(cell.textContent);
+      });
       tableCell.textContent = sum;
-      if (level > 1) {
-        let sum2 = sum;
-        const tableCell1 = document.getElementById(
-          `sum_m${index}_l${level - 2}`
-        );
-        cellsFolders.forEach((cell) => {
-          sum2 += parseInt(cell.textContent);
-        });
-        tableCell1.textContent = sum2;
-      }
+
+      let sumRowValue = 0;
+      const sumRow = parentTr.querySelector(`[id^="el_m0_l"]`);
+      rowValue.forEach((el, index) => {
+        if (index > 0) {
+          sumRowValue += parseInt(el.textContent);
+        }
+      });
+      sumRow.textContent = sumRowValue;
+      const sumFolder = parentBody.querySelector(`[id^="sum_m0_l"]`);
+      const arr = sumFolder.closest("tr").querySelectorAll(`[id^="sum"]`);
+      console.log("🚀 ~ handleKeyUp ~ sumFolder:", arr);
+      let sum1 = 0;
+      arr.forEach((el, index) => {
+        if (index !== 0) {
+          sum1 += parseInt(el.textContent);
+        }
+      });
+      sumFolder.textContent = sum1;
+
       element.contentEditable = false;
       element.removeEventListener("keyup", handleKeyUp);
     } else if (e.key === "Escape") {

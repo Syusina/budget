@@ -139,19 +139,31 @@ function sum(event, level, index) {
   element.focus();
   element.textContent = "";
   const parent = event.target.closest("tr").closest("tbody");
-  const cells = parent.querySelectorAll(`#el_m${index}_l${level}`);
+  const parentTable = event.target.closest("tr").closest("table");
+  const cellsFile = parent.querySelectorAll(`#el_m${index}_l${level}`);
+  const cellsFolders = parentTable.querySelectorAll(`#sum_m${index}_l${level}`);
 
   function handleKeyUp(e) {
     if (e.key === "Enter") {
       e.preventDefault();
       let sum = 0;
-      cells.forEach((cell) => {
+      cellsFile.forEach((cell) => {
         sum += parseInt(cell.textContent);
       });
       enteredValue = event.target.textContent;
       element.textContent = parseInt(enteredValue);
       const tableCell = document.getElementById(`sum_m${index}_l${level - 1}`);
       tableCell.textContent = sum;
+      if (level > 1) {
+        let sum2 = sum;
+        const tableCell1 = document.getElementById(
+          `sum_m${index}_l${level - 2}`
+        );
+        cellsFolders.forEach((cell) => {
+          sum2 += parseInt(cell.textContent);
+        });
+        tableCell1.textContent = sum2;
+      }
       element.contentEditable = false;
       element.removeEventListener("keyup", handleKeyUp);
     } else if (e.key === "Escape") {

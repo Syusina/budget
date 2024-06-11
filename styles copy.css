@@ -7,17 +7,11 @@ body {
   margin: 0;
 }
 
-tbody tr {
-  display: inline-table;
-  transition: max-height 0.3s ease-in-out;
+.mainTitle {
+  margin: 20px;
 }
 
-tbody tr.show {
-  display: none;
-  transition: max-height 0.3s ease-in-out;
-}
-
-#tableContainer {
+.tableContainer {
   margin: 20px;
   height: 500px;
   overflow: scroll;
@@ -25,25 +19,27 @@ tbody tr.show {
   border-radius: 4px;
 }
 
-.table {
+table {
   border-spacing: 0px;
+  margin: 0;
+  padding: 0;
 }
 
-.headTitle {
+.titleMain {
   display: flex;
   align-items: center;
   box-sizing: border-box;
   width: 250px;
   height: 45px;
   background: #fff;
-  padding: 9px 10px 9px 32px;
   border: 1px solid #eee;
   border-top: 0;
   border-left: 0;
   margin: 0;
+  padding: 0;
 }
 
-.headTitleCell {
+.title {
   box-sizing: border-box;
   width: 130px;
   min-width: 130px;
@@ -59,8 +55,9 @@ tbody tr.show {
   line-height: 17px;
 }
 
-.bodyTitle {
+.mainCell {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   width: 250px;
   height: 38px;
@@ -76,7 +73,7 @@ tbody tr.show {
   white-space: nowrap;
 }
 
-.bodyTitleCell {
+.titleValueCell {
   box-sizing: border-box;
   width: 130px;
   background: #f7f7f7;
@@ -89,8 +86,9 @@ tbody tr.show {
   font-size: 14px;
 }
 
-.bodyNameCell {
+.nameCell {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   width: 250px;
   height: 38px;
@@ -106,7 +104,7 @@ tbody tr.show {
   white-space: nowrap;
 }
 
-.bodyValueCell {
+.valueCell {
   width: 130px;
   background: #fff;
   text-align: center;
@@ -119,9 +117,39 @@ tbody tr.show {
   font-size: 14px;
 }
 
-.iconHide {
+.iconSort {
   cursor: pointer;
-  width: 8px;
-  height: 8px;
-  margin-right: 10px;
+  width: 13.3px;
+  height: 12px;
+  margin-left: 8px;
+}
+
+.iconsContainer {
+  display: flex;
+  align-items: center;
+}
+
+.iconArrow {
+  margin-right: 8px;
+}
+
+.icon {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+}
+
+.budgetItem {
+  box-sizing: border-box;
+  height: 38px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  background: #fff;
+  padding: 9px 10px 9px 32px;
+}
+
+.level1 {
+  padding-left: 32px;
 }

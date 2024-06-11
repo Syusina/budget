@@ -12,7 +12,7 @@ tbody tr {
   transition: max-height 0.3s ease-in-out;
 }
 
-tbody tr.show {
+.hide {
   display: none;
   transition: max-height 0.3s ease-in-out;
 }

@@ -120,15 +120,14 @@ const dataInit = [
   },
 ];
 
-function hide() {
-  document.querySelectorAll("#btn-hide").forEach((el) => {
-    el.addEventListener("click", function (event) {
-      const parent = event.target.closest("tbody");
-      const arr = parent.querySelectorAll(".value");
-      arr.forEach((el) => {
-        el.classList.toggle("show");
-      });
-    });
+function hide(event) {
+  const parent = event.target.closest("tbody");
+  const array = Array.from(parent.children);
+
+  array.forEach((el, index) => {
+    if (index !== 0) {
+      el.classList.toggle("hide");
+    }
   });
 }
 
@@ -171,7 +170,6 @@ function sum(event, level, index) {
       sumRow.textContent = sumRowValue;
       const sumFolder = parentBody.querySelector(`[id^="sum_m0_l"]`);
       const arr = sumFolder.closest("tr").querySelectorAll(`[id^="sum"]`);
-      console.log("🚀 ~ handleKeyUp ~ sumFolder:", arr);
       let sum1 = 0;
       arr.forEach((el, index) => {
         if (index !== 0) {
@@ -250,8 +248,9 @@ bodyHeadTitleArray.forEach((title, index) => {
 });
 
 const tbodyData = document.createElement("tbody");
+tbodyData.id = "tbodyData";
 
-function renderData(data, folderName, level) {
+function renderData(data, folderName, body, level) {
   data.forEach((element, index) => {
     if (element.type === "FOLDER") {
       let isHide = false;
@@ -268,7 +267,13 @@ function renderData(data, folderName, level) {
         imgHide.src = "./Icons/mini-arrow.png";
         imgHide.id = "icon-hide";
         imgHide.classList.add("iconHide");
-        imgHide.addEventListener("click", () => {
+
+        const nameContainer = document.createElement("div");
+        nameContainer.classList.add("nameContainer");
+        nameContainer.id = "btn-hide";
+        nameContainer.setAttribute("onclick", "hide(event)");
+
+        nameContainer.addEventListener("click", () => {
           if (!isHide) {
             imgHide.style.transition = "transform 0.3s ease-in-out";
             imgHide.style.transform = "rotate(90deg)";
@@ -279,9 +284,7 @@ function renderData(data, folderName, level) {
             isHide = false;
           }
         });
-        const nameContainer = document.createElement("div");
-        nameContainer.classList.add("nameContainer");
-        nameContainer.id = "btn-hide";
+
         const label = document.createElement("label");
         label.style.cursor = "pointer";
         label.textContent = element.name;
@@ -324,7 +327,8 @@ function renderData(data, folderName, level) {
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
-      tbodyHead.appendChild(tbody);
+
+      body.appendChild(tbody);
     } else {
       const tr = document.createElement("tr");
       tr.classList.add("value");
@@ -350,7 +354,8 @@ function renderData(data, folderName, level) {
     }
 
     if (element.type === "FOLDER" && element.child) {
-      renderData(element.child, element.name, level + 1);
+      const tbody = document.getElementById(`body_${level}_${element.name}`);
+      renderData(element.child, element.name, tbody, level + 1);
     }
   });
 }
@@ -363,5 +368,4 @@ table.classList.add("table");
 const tableContainer = document.getElementById("tableContainer");
 tableContainer.appendChild(table);
 
-renderData(dataInit, "", 0);
-hide();
+renderData(dataInit, "", tbodyData, 0);

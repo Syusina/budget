@@ -147,9 +147,6 @@ function renderData(data, level) {
       const tr = document.createElement("tr");
       tr.classList.add("name");
       const th = document.createElement("th");
-      const label = document.createElement("label");
-      label.textContent = element.name;
-      th.appendChild(label);
       th.classList.add("bodyTitle");
       if (level > 0) {
         const imgHide = document.createElement("img");
@@ -169,6 +166,10 @@ function renderData(data, level) {
         });
         th.style.paddingLeft = level * 32 + "px";
         th.appendChild(imgHide);
+        const label = document.createElement("label");
+        label.textContent = element.name;
+        th.appendChild(label);
+      } else {
         const label = document.createElement("label");
         label.textContent = element.name;
         th.appendChild(label);

@@ -1,8 +1,8 @@
 function hide() {
-  document.querySelectorAll("#icon-hide").forEach((el) => {
-    el.addEventListener("click", function (ev) {
-      const oTarget = ev.target.closest("tbody");
-      const arr = oTarget.querySelectorAll(".value");
+  document.querySelectorAll("#btn-hide").forEach((el) => {
+    el.addEventListener("click", function (event) {
+      const parent = event.target.closest("tbody");
+      const arr = parent.querySelectorAll(".value");
       arr.forEach((el) => {
         el.classList.toggle("show");
       });
@@ -53,12 +53,12 @@ const dataInit = [
       {
         name: "Разработка проекта",
         type: "FILE",
-        price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        price: [12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         name: "Ремонтные работы",
         type: "FILE",
-        price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        price: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
       {
         name: "Услуги",
@@ -94,9 +94,90 @@ const dataInit = [
           },
         ],
       },
+      {
+        name: "Услуги1",
+        type: "FOLDER",
+        price: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        child: [
+          {
+            name: "Аудит и консалтинг",
+            type: "FILE",
+            price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          },
+          {
+            name: "Работа электрика",
+            type: "FILE",
+            price: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          },
+          {
+            name: "Ремонт1",
+            type: "FOLDER",
+            price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            child: [
+              {
+                name: "Малярные работы",
+                type: "FILE",
+                price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              },
+              {
+                name: "Доставка",
+                type: "FILE",
+                price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
 ];
+
+function sum(event, level, index) {
+  let enteredValue = event.target.textContent;
+  const element = event.target;
+  element.contentEditable = true;
+  element.focus();
+  element.textContent = "";
+  const parent = event.target.closest("tr").closest("tbody");
+  const cells = parent.querySelectorAll(`#el_m${index}_l${level}`);
+
+  function handleKeyUp(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      let sum = 0;
+      cells.forEach((cell) => {
+        sum += parseInt(cell.textContent);
+      });
+      enteredValue = event.target.textContent;
+      element.textContent = parseInt(enteredValue);
+      const tableCell = document.getElementById(`sum_m${index}_l${level - 1}`);
+      tableCell.textContent = sum;
+      element.contentEditable = false;
+      element.removeEventListener("keyup", handleKeyUp);
+    } else if (e.key === "Escape") {
+      element.textContent = enteredValue;
+      element.contentEditable = false;
+      element.removeEventListener("keyup", handleKeyUp);
+    }
+  }
+
+  function handleBlur() {
+    if (enteredValue !== "") {
+      element.textContent = enteredValue;
+    }
+    element.contentEditable = false;
+    element.removeEventListener("keyup", handleKeyUp);
+  }
+
+  function handleClick() {
+    element.contentEditable = true;
+    element.focus();
+  }
+
+  element.addEventListener("keyup", handleKeyUp);
+  element.addEventListener("blur", handleBlur);
+  element.addEventListener("click", handleClick);
+}
 
 const table = document.createElement("table");
 const thead = document.createElement("thead");
@@ -125,6 +206,10 @@ bodyHeadTitleArray.forEach((title, index) => {
     const th = document.createElement("th");
     th.textContent = title;
     th.classList.add("bodyTitle");
+    const imgSort = document.createElement("img");
+    imgSort.src = "./Icons/sort-descending.png";
+    imgSort.classList.add("iconSort");
+    th.appendChild(imgSort);
     trBodyHead.appendChild(th);
   } else {
     const td = document.createElement("td");
@@ -138,16 +223,18 @@ bodyHeadTitleArray.forEach((title, index) => {
 
 const tbodyData = document.createElement("tbody");
 
-function renderData(data, level) {
+function renderData(data, folderName, level) {
   data.forEach((element, index) => {
     if (element.type === "FOLDER") {
       let isHide = false;
       const tbody = document.createElement("tbody");
-      tbody.id = `body_${level}`;
+      tbody.id = `body_${level}_${element.name}`;
       const tr = document.createElement("tr");
-      tr.classList.add("name");
+      tr.classList.add(`nameFolder_${level}`);
       const th = document.createElement("th");
-      th.classList.add("bodyTitle");
+      level === 0
+        ? th.classList.add("bodyTitle")
+        : th.classList.add("bodyNameCell");
       if (level > 0) {
         const imgHide = document.createElement("img");
         imgHide.src = "./Icons/mini-arrow.png";
@@ -164,11 +251,30 @@ function renderData(data, level) {
             isHide = false;
           }
         });
-        th.style.paddingLeft = level * 32 + "px";
-        th.appendChild(imgHide);
+        const nameContainer = document.createElement("div");
+        nameContainer.classList.add("nameContainer");
+        nameContainer.id = "btn-hide";
         const label = document.createElement("label");
+        label.style.cursor = "pointer";
         label.textContent = element.name;
-        th.appendChild(label);
+        nameContainer.appendChild(imgHide);
+        nameContainer.appendChild(label);
+
+        th.style.paddingLeft = level * 32 + "px";
+
+        const iconsContainer = document.createElement("div");
+        iconsContainer.classList.add("iconsContainer");
+        const imgAddFile = document.createElement("img");
+        imgAddFile.src = "./Icons/plus.png";
+        imgAddFile.classList.add("iconAdd");
+        const imgAddFolder = document.createElement("img");
+        imgAddFolder.src = "./Icons/folder.png";
+        imgAddFolder.classList.add("iconAdd");
+        iconsContainer.appendChild(imgAddFolder);
+        iconsContainer.appendChild(imgAddFile);
+
+        th.appendChild(nameContainer);
+        th.appendChild(iconsContainer);
       } else {
         const label = document.createElement("label");
         label.textContent = element.name;
@@ -177,10 +283,16 @@ function renderData(data, level) {
 
       tr.appendChild(th);
 
-      element.price.forEach((el) => {
+      element.price.forEach((el, index) => {
         const td = document.createElement("td");
-        td.textContent = el;
-        td.classList.add("bodyTitleCell");
+        td.id = `sum_m${index}_l${level}`;
+        td.textContent = 0;
+        if (level === 0) {
+          td.classList.add("bodyTitleCell");
+        } else {
+          td.classList.add("bodyValueCell");
+        }
+
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
@@ -196,19 +308,21 @@ function renderData(data, level) {
       th.style.paddingLeft = level * 32 + "px";
       tr.appendChild(th);
 
-      element.price.forEach((el) => {
+      element.price.forEach((el, index) => {
         const td = document.createElement("td");
         td.textContent = el;
         td.classList.add("bodyValueCell");
+        td.setAttribute("contenteditable", "true");
+        td.setAttribute("onclick", `sum(event, ${level}, ${index})`);
+        td.id = `el_m${index}_l${level}`;
         tr.appendChild(td);
       });
-
-      const tbody = document.getElementById(`body_${level - 1}`);
+      const tbody = document.getElementById(`body_${level - 1}_${folderName}`);
       tbody.appendChild(tr);
     }
 
     if (element.type === "FOLDER" && element.child) {
-      renderData(element.child, level + 1);
+      renderData(element.child, element.name, level + 1);
     }
   });
 }
@@ -221,5 +335,5 @@ table.classList.add("table");
 const tableContainer = document.getElementById("tableContainer");
 tableContainer.appendChild(table);
 
-renderData(dataInit, 0);
+renderData(dataInit, "", 0);
 hide();

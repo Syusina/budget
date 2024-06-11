@@ -62,6 +62,7 @@ tbody tr.show {
 .bodyTitle {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 250px;
   height: 38px;
   text-align: left;
@@ -92,6 +93,7 @@ tbody tr.show {
 .bodyNameCell {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 250px;
   height: 38px;
   text-align: left;
@@ -107,21 +109,51 @@ tbody tr.show {
 }
 
 .bodyValueCell {
+  box-sizing: border-box;
   width: 130px;
   background: #fff;
   text-align: center;
-  align-items: center;
   border: 1px solid #eee;
   border-top: 0;
   border-left: 0;
   font-weight: 700;
   line-height: 20px;
   font-size: 14px;
+  padding: 8px;
 }
 
 .iconHide {
   cursor: pointer;
   width: 8px;
   height: 8px;
-  margin-right: 10px;
+  margin-right: 8px;
+}
+
+.iconSort {
+  cursor: pointer;
+  width: 13px;
+  height: 12px;
+  margin-left: 8px;
+}
+
+.iconAdd {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+}
+
+.nameContainer {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.iconsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }

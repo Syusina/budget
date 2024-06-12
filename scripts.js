@@ -122,12 +122,15 @@ const dataInit = [
 
 function handleTableChange(event) {
   if (event.key === "Enter") {
-    sumRow(event.target.value);
+    const element = event.target;
+
+    sumRow(element);
   }
 }
 
-function sumRow(value) {
-  console.log("🚀 ~ sumRow ~ value:", value);
+function sumRow(element) {
+  // const parent = document.querySelectorAll(``);
+  console.log("🚀 ~ sumRow ~ element:", element);
 }
 
 function hide(event) {
@@ -189,17 +192,18 @@ function addFile(event, level) {
       element.innerHTML = initText;
     }
   });
-  input.addEventListener("blur", function () {
-    element.innerHTML = initText;
-  });
+  // input.addEventListener("blur", function () {
+  //   element.innerHTML = initText;
+  // });
 }
 
-function change(event) {
+function change(event, month, level) {
   const element = event.target.closest("td");
   const initText = element.textContent;
   element.textContent = "";
 
   const input = document.createElement("input");
+  input.id = `el_m${month}_l${level - 1}`;
   input.classList.add("inputValue");
   input.placeholder = "";
 
@@ -211,9 +215,9 @@ function change(event) {
       element.textContent = event.target.value;
     }
   });
-  input.addEventListener("blur", function () {
-    element.textContent = initText;
-  });
+  // input.addEventListener("blur", function () {
+  //   element.textContent = initText;
+  // });
 }
 
 const table = document.createElement("table");
@@ -390,7 +394,7 @@ function renderData(data, folderName, body, level) {
         td.classList.add("bodyValueCell");
         td.setAttribute("contenteditable", "true");
         if (index !== 0) {
-          td.setAttribute("onclick", `change(event)`);
+          td.setAttribute("onclick", `change(event, ${index}, ${level})`);
         }
 
         td.id = `el_m${index}_l${level}`;

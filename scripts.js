@@ -131,6 +131,58 @@ function hide(event) {
   });
 }
 
+function deleteRow(event) {
+  const element = event.target.closest("tr");
+  const parent = element.closest("tbody");
+  parent.removeChild(element);
+}
+
+function addFile(event, level) {
+  event.target.style.background = "none";
+  const element = event.target.closest("th");
+  const parent = event.target.closest("tbody");
+
+  const files = parent.querySelectorAll("tr");
+  const folders = parent.querySelectorAll("tbody");
+
+  const initText = element.innerHTML;
+  element.innerHTML = "";
+
+  const input = document.createElement("input");
+  input.classList.add("input");
+  input.placeholder = "Название статьи...";
+
+  element.appendChild(input);
+  input.focus();
+
+  input.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+
+      const newCell = document.createElement("tr");
+      const nameRow = event.target.value;
+      const newName = document.createElement("th");
+      newName.classList.add("bodyNameCell");
+      newName.style.paddingLeft = (level + 1) * 32 + "px";
+      newName.textContent = nameRow;
+
+      newCell.appendChild(newName);
+      for (let i = 0; i < 13; i += 1) {
+        const valueCell = document.createElement("td");
+        valueCell.textContent = 0;
+        valueCell.contentEditable = true;
+        valueCell.classList.add("bodyValueCell");
+        valueCell.id = `el_m${i}_l${level}`;
+        valueCell.setAttribute("onclick", `sum(event, ${level}, ${i})`);
+        newCell.appendChild(valueCell);
+      }
+      console.log(newCell);
+      parent.appendChild(newCell);
+      element.innerHTML = initText;
+    }
+  });
+}
+
 function sum(event, level, index) {
   let enteredValue = event.target.textContent;
   const element = event.target;
@@ -298,9 +350,29 @@ function renderData(data, folderName, body, level) {
         const imgAddFile = document.createElement("img");
         imgAddFile.src = "./Icons/plus.png";
         imgAddFile.classList.add("iconAdd");
+
+        imgAddFile.addEventListener("mouseover", function () {
+          imgAddFile.style.background = "rgba(0, 0, 0, 0.1)";
+        });
+
+        imgAddFile.addEventListener("mouseout", function () {
+          imgAddFile.style.background = "none";
+        });
+
+        imgAddFile.setAttribute("onclick", `addFile(event, ${level})`);
+
         const imgAddFolder = document.createElement("img");
         imgAddFolder.src = "./Icons/folder.png";
         imgAddFolder.classList.add("iconAdd");
+
+        imgAddFolder.addEventListener("mouseover", function () {
+          imgAddFolder.style.background = "rgba(0, 0, 0, 0.1)";
+        });
+
+        imgAddFolder.addEventListener("mouseout", function () {
+          imgAddFolder.style.background = "none";
+        });
+
         iconsContainer.appendChild(imgAddFolder);
         iconsContainer.appendChild(imgAddFile);
 
@@ -334,10 +406,22 @@ function renderData(data, folderName, body, level) {
       tr.classList.add("value");
       const th = document.createElement("th");
       const label = document.createElement("label");
+      label.classList.add("labelBodyName");
       label.textContent = element.name;
       th.appendChild(label);
       th.classList.add("bodyNameCell");
       th.style.paddingLeft = level * 32 + "px";
+      const imgCancel = document.createElement("img");
+      imgCancel.src = "./Icons/cancel.png";
+      imgCancel.classList.add("iconCancel");
+      imgCancel.addEventListener("mouseover", function () {
+        imgCancel.classList.add("iconCancelActive");
+      });
+      imgCancel.addEventListener("mouseout", function () {
+        imgCancel.classList.remove("iconCancelActive");
+      });
+      imgCancel.setAttribute("onclick", "deleteRow(event)");
+      th.appendChild(imgCancel);
       tr.appendChild(th);
 
       element.price.forEach((el, index) => {

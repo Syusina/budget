@@ -7,6 +7,10 @@ body {
   margin: 0;
 }
 
+th:focus {
+  outline: none;
+}
+
 tbody tr {
   display: inline-table;
   transition: max-height 0.3s ease-in-out;
@@ -91,6 +95,7 @@ tbody tr {
 }
 
 .bodyNameCell {
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -106,6 +111,14 @@ tbody tr {
   border-top: 0;
   border-left: 0;
   white-space: nowrap;
+}
+
+.labelBodyName{
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .bodyValueCell {
@@ -133,14 +146,29 @@ tbody tr {
   cursor: pointer;
   width: 13px;
   height: 12px;
-  margin-left: 8px;
+  padding: 4px;
 }
 
 .iconAdd {
   cursor: pointer;
   width: 16px;
   height: 16px;
-  margin-left: 8px;
+  padding: 4px;
+  border-radius: 3px;
+  transition: background 0.2s ease-in-out;
+}
+
+.iconCancel {
+  cursor: pointer;
+  opacity: 0;
+  width: 16px;
+  height: 16px;
+  padding: 4px;
+}
+
+.iconCancelActive {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .nameContainer {
@@ -156,4 +184,9 @@ tbody tr {
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+
+.input {
+  outline: none;
+  border: none;
 }

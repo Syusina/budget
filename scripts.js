@@ -83,7 +83,7 @@ const dataInit = [
         ],
       },
       {
-        name: "Услуги1",
+        name: "Арбитраж",
         type: "FOLDER",
         price: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         child: [
@@ -123,7 +123,6 @@ const dataInit = [
 function sort() {
   const element = document.querySelector(".iconSort");
   const folderNames = Array.from(document.querySelectorAll("#title_l1"));
-  console.log("🚀 ~ sort ~ folderNames:", folderNames);
   if (element.src.endsWith("sort-descending.png")) {
     element.src = "./Icons/sort-alphabet.png";
   } else {
@@ -141,10 +140,16 @@ function sort() {
     }
     return 0;
   });
+
   const tbody = document.querySelector(`[id^="body_0"]`);
   sortedFolderNames.forEach((folder) => {
-    const parentTr = folder.parentNode;
-    tbody.appendChild(parentTr);
+    if (folder.closest("tr").className !== "value") {
+      const element = folder.closest("tbody");
+      tbody.appendChild(element);
+    } else {
+      const parentTr = folder.closest("tr");
+      tbody.appendChild(parentTr);
+    }
   });
 }
 
@@ -180,6 +185,7 @@ function addFile(event, level) {
     if (event.key === "Enter") {
       event.preventDefault();
       const newCell = document.createElement("tr");
+      newCell.classList.add("value");
       const nameRow = event.target.value;
       const newName = document.createElement("th");
       newName.classList.add("bodyNameCell");

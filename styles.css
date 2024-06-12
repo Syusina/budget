@@ -13,12 +13,10 @@ th:focus {
 
 tbody tr {
   display: inline-table;
-  transition: max-height 0.3s ease-in-out;
 }
 
 .hide {
   display: none;
-  transition: max-height 0.3s ease-in-out;
 }
 
 #tableContainer {

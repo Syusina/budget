@@ -130,7 +130,7 @@ function handleTableChange(event) {
 
 function sumRow(element) {
   // const parent = document.querySelectorAll(``);
-  console.log("🚀 ~ sumRow ~ element:", element);
+  // console.log("🚀 ~ sumRow ~ element:", element);
 }
 
 function hide(event) {
@@ -199,6 +199,20 @@ function addFile(event, level) {
 
 function change(event, month, level) {
   const element = event.target.closest("td");
+  const parent = element.closest("tr");
+  const parentBody = parent.closest("tbody");
+  const sumRow = parent.querySelector(`[id^="el_m0_l${level}"]`);
+  const sumColumn = parentBody.querySelector(
+    `[id^="sum_m${month}_l${level - 1}"]`
+  );
+  const valuesRow = parent.querySelectorAll("td");
+  const valuesColumnFile = parentBody.querySelectorAll(
+    `[id^="el_m${month}_l${level}"]`
+  );
+  const valuesColumnFolder = parentBody.querySelectorAll(
+    `[id^="sum_m${month}_l${level}"]`
+  );
+
   const initText = element.textContent;
   element.textContent = "";
 
@@ -213,6 +227,28 @@ function change(event, month, level) {
     if (event.key === "Enter") {
       event.preventDefault();
       element.textContent = event.target.value;
+
+      let sumRowValue = 0;
+      valuesRow.forEach((value, index) => {
+        if (index !== 0) {
+          sumRowValue += parseInt(value.textContent);
+        }
+      });
+      sumRow.textContent = sumRowValue;
+
+      let sumColumnValue = 0;
+      valuesColumnFile.forEach((value) => {
+        sumColumnValue += parseInt(value.textContent);
+      });
+
+      if (valuesColumnFolder) {
+        valuesColumnFolder.forEach((value) => {
+          sumColumnValue += parseInt(value.textContent);
+        });
+        sumColumn.textContent = sumColumnValue;
+      }
+
+      sumColumn.textContent = sumColumnValue;
     }
   });
   // input.addEventListener("blur", function () {
@@ -352,10 +388,10 @@ function renderData(data, folderName, body, level) {
       element.price.forEach((el, index) => {
         const td = document.createElement("td");
         td.id = `sum_m${index}_l${level}`;
+
         td.textContent = 0;
         if (level === 0) {
           td.classList.add("bodyTitleCell");
-          // td.textContent = sum(tr);
         } else {
           td.classList.add("bodyValueCell");
         }
@@ -393,10 +429,7 @@ function renderData(data, folderName, body, level) {
         td.textContent = el;
         td.classList.add("bodyValueCell");
         td.setAttribute("contenteditable", "true");
-        if (index !== 0) {
-          td.setAttribute("onclick", `change(event, ${index}, ${level})`);
-        }
-
+        td.setAttribute("onclick", `change(event, ${index}, ${level})`);
         td.id = `el_m${index}_l${level}`;
         tr.appendChild(td);
       });

@@ -120,16 +120,6 @@ const dataInit = [
   },
 ];
 
-function handleTableChange(event) {
-  if (event.key === "Enter") {
-    sumRow(event.target.value);
-  }
-}
-
-function sumRow(value) {
-  console.log("🚀 ~ sumRow ~ value:", value);
-}
-
 function hide(event) {
   const parent = event.target.closest("tbody");
   const array = Array.from(parent.children);
@@ -183,38 +173,89 @@ function addFile(event, level) {
         valueCell.contentEditable = true;
         valueCell.classList.add("bodyValueCell");
         valueCell.id = `el_m${i}_l${level}`;
+        valueCell.setAttribute("onclick", `sum(event, ${level}, ${i})`);
         newCell.appendChild(valueCell);
       }
+      console.log(newCell);
       parent.appendChild(newCell);
       element.innerHTML = initText;
     }
   });
-  input.addEventListener("blur", function () {
-    element.innerHTML = initText;
-  });
 }
 
-function change(event) {
-  const element = event.target.closest("td");
-  const initText = element.textContent;
-  element.textContent = "";
+// function sum(event, level, index) {
+//   let enteredValue = event.target.textContent;
+//   const element = event.target;
+//   element.contentEditable = true;
+//   element.focus();
+//   element.textContent = "";
+//   const parentTr = event.target.closest("tr");
+//   const rowValue = parentTr.querySelectorAll("td.bodyValueCell");
 
-  const input = document.createElement("input");
-  input.classList.add("inputValue");
-  input.placeholder = "";
+//   const parentBody = event.target.closest("tr").closest("tbody");
+//   const parentTable = event.target.closest("tr").closest("table");
+//   const cellsFile = parentBody.querySelectorAll(`#el_m${index}_l${level}`);
+//   const cellsFolders = parentTable.querySelectorAll(`#sum_m${index}_l${level}`);
 
-  element.appendChild(input);
-  input.focus();
-  input.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      element.textContent = event.target.value;
-    }
-  });
-  input.addEventListener("blur", function () {
-    element.textContent = initText;
-  });
-}
+//   function handleKeyUp(e) {
+//     if (e.key === "Enter") {
+//       e.preventDefault();
+//       enteredValue = event.target.textContent;
+//       element.textContent = parseInt(enteredValue);
+//       const tableCell = document.getElementById(`sum_m${index}_l${level - 1}`);
+//       let sum = 0;
+//       cellsFile.forEach((cell) => {
+//         sum += parseInt(cell.textContent);
+//       });
+//       cellsFolders.forEach((cell) => {
+//         sum += parseInt(cell.textContent);
+//       });
+//       tableCell.textContent = sum;
+
+//       let sumRowValue = 0;
+//       const sumRow = parentTr.querySelector(`[id^="el_m0_l"]`);
+//       rowValue.forEach((el, index) => {
+//         if (index > 0) {
+//           sumRowValue += parseInt(el.textContent);
+//         }
+//       });
+//       sumRow.textContent = sumRowValue;
+//       const sumFolder = parentBody.querySelector(`[id^="sum_m0_l"]`);
+//       const arr = sumFolder.closest("tr").querySelectorAll(`[id^="sum"]`);
+//       let sum1 = 0;
+//       arr.forEach((el, index) => {
+//         if (index !== 0) {
+//           sum1 += parseInt(el.textContent);
+//         }
+//       });
+//       sumFolder.textContent = sum1;
+
+//       element.contentEditable = false;
+//       element.removeEventListener("keyup", handleKeyUp);
+//     } else if (e.key === "Escape") {
+//       element.textContent = enteredValue;
+//       element.contentEditable = false;
+//       element.removeEventListener("keyup", handleKeyUp);
+//     }
+//   }
+
+//   function handleBlur() {
+//     if (enteredValue !== "") {
+//       element.textContent = enteredValue;
+//     }
+//     element.contentEditable = false;
+//     element.removeEventListener("keyup", handleKeyUp);
+//   }
+
+//   function handleClick() {
+//     element.contentEditable = true;
+//     element.focus();
+//   }
+
+//   element.addEventListener("keyup", handleKeyUp);
+//   element.addEventListener("blur", handleBlur);
+//   element.addEventListener("click", handleClick);
+// }
 
 const table = document.createElement("table");
 const thead = document.createElement("thead");
@@ -351,7 +392,6 @@ function renderData(data, folderName, body, level) {
         td.textContent = 0;
         if (level === 0) {
           td.classList.add("bodyTitleCell");
-          // td.textContent = sum(tr);
         } else {
           td.classList.add("bodyValueCell");
         }
@@ -389,10 +429,7 @@ function renderData(data, folderName, body, level) {
         td.textContent = el;
         td.classList.add("bodyValueCell");
         td.setAttribute("contenteditable", "true");
-        if (index !== 0) {
-          td.setAttribute("onclick", `change(event)`);
-        }
-
+        // td.setAttribute("onclick", `sum(event, ${level}, ${index})`);
         td.id = `el_m${index}_l${level}`;
         tr.appendChild(td);
       });
@@ -416,4 +453,3 @@ const tableContainer = document.getElementById("tableContainer");
 tableContainer.appendChild(table);
 
 renderData(dataInit, "", tbodyData, 0);
-document.addEventListener("keydown", (event) => handleTableChange(event));

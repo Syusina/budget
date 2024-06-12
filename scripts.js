@@ -120,23 +120,37 @@ const dataInit = [
   },
 ];
 
-function handleTableChange(event) {
-  if (event.key === "Enter") {
-    const element = event.target;
-
-    sumRow(element);
+function sort() {
+  const element = document.querySelector(".iconSort");
+  const folderNames = Array.from(document.querySelectorAll("#title_l1"));
+  console.log("🚀 ~ sort ~ folderNames:", folderNames);
+  if (element.src.endsWith("sort-descending.png")) {
+    element.src = "./Icons/sort-alphabet.png";
+  } else {
+    element.src = "./Icons/sort-descending.png";
   }
-}
 
-function sumRow(element) {
-  // const parent = document.querySelectorAll(``);
-  // console.log("🚀 ~ sumRow ~ element:", element);
+  const sortedFolderNames = folderNames.sort((a, b) => {
+    const nameA = a.textContent.toLowerCase();
+    const nameB = b.textContent.toLowerCase();
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  });
+  const tbody = document.querySelector(`[id^="body_0"]`);
+  sortedFolderNames.forEach((folder) => {
+    const parentTr = folder.parentNode;
+    tbody.appendChild(parentTr);
+  });
 }
 
 function hide(event) {
   const parent = event.target.closest("tbody");
   const array = Array.from(parent.children);
-
   array.forEach((el, index) => {
     if (index !== 0) {
       el.classList.toggle("hide");
@@ -154,47 +168,58 @@ function addFile(event, level) {
   event.target.style.background = "none";
   const element = event.target.closest("th");
   const parent = event.target.closest("tbody");
-
-  const files = parent.querySelectorAll("tr");
-  const folders = parent.querySelectorAll("tbody");
-
   const initText = element.innerHTML;
   element.innerHTML = "";
-
   const input = document.createElement("input");
   input.classList.add("input");
   input.placeholder = "Название статьи...";
-
   element.appendChild(input);
   input.focus();
 
   input.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
-
       const newCell = document.createElement("tr");
       const nameRow = event.target.value;
       const newName = document.createElement("th");
       newName.classList.add("bodyNameCell");
       newName.style.paddingLeft = (level + 1) * 32 + "px";
       newName.textContent = nameRow;
+      const imgCancel = document.createElement("img");
+      imgCancel.src = "./Icons/cancel.png";
+      imgCancel.classList.add("iconCancel");
+      imgCancel.addEventListener("mouseover", function () {
+        imgCancel.classList.add("iconCancelActive");
+      });
+      imgCancel.addEventListener("mouseout", function () {
+        imgCancel.classList.remove("iconCancelActive");
+      });
+      imgCancel.setAttribute("onclick", "deleteRow(event)");
+      newName.appendChild(imgCancel);
 
       newCell.appendChild(newName);
+
       for (let i = 0; i < 13; i += 1) {
         const valueCell = document.createElement("td");
         valueCell.textContent = 0;
-        valueCell.contentEditable = true;
         valueCell.classList.add("bodyValueCell");
-        valueCell.id = `el_m${i}_l${level}`;
+        if (i > 0) {
+          valueCell.style.cursor = "pointer";
+          valueCell.setAttribute(
+            "onclick",
+            `change(event, ${i}, ${level + 1})`
+          );
+        }
+
+        valueCell.id = `el_m${i}_l${level + 1}`;
         newCell.appendChild(valueCell);
       }
-      parent.appendChild(newCell);
+      if (event.target.value !== "") {
+        parent.appendChild(newCell);
+      }
       element.innerHTML = initText;
     }
   });
-  // input.addEventListener("blur", function () {
-  //   element.innerHTML = initText;
-  // });
 }
 
 function change(event, month, level) {
@@ -202,9 +227,7 @@ function change(event, month, level) {
   const parent = element.closest("tr");
   const parentBody = parent.closest("tbody");
   const sumRow = parent.querySelector(`[id^="el_m0_l${level}"]`);
-  const sumColumn = parentBody.querySelector(
-    `[id^="sum_m${month}_l${level - 1}"]`
-  );
+
   const valuesRow = parent.querySelectorAll("td");
   const valuesColumnFile = parentBody.querySelectorAll(
     `[id^="el_m${month}_l${level}"]`
@@ -212,7 +235,7 @@ function change(event, month, level) {
   const valuesColumnFolder = parentBody.querySelectorAll(
     `[id^="sum_m${month}_l${level}"]`
   );
-
+  let changeName = "";
   const initText = element.textContent;
   element.textContent = "";
 
@@ -226,7 +249,9 @@ function change(event, month, level) {
   input.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
-      element.textContent = event.target.value;
+      const newValue = event.target.value;
+      element.textContent = newValue;
+      changeName = newValue;
 
       let sumRowValue = 0;
       valuesRow.forEach((value, index) => {
@@ -236,24 +261,41 @@ function change(event, month, level) {
       });
       sumRow.textContent = sumRowValue;
 
-      let sumColumnValue = 0;
-      valuesColumnFile.forEach((value) => {
-        sumColumnValue += parseInt(value.textContent);
-      });
-
-      if (valuesColumnFolder) {
-        valuesColumnFolder.forEach((value) => {
+      for (let i = level; i > 0; i -= 1) {
+        const sumColumn = document.querySelector(
+          `[id^="sum_m${month}_l${i - 1}"]`
+        );
+        let sumColumnValue = 0;
+        valuesColumnFile.forEach((value) => {
           sumColumnValue += parseInt(value.textContent);
         });
-        sumColumn.textContent = sumColumnValue;
-      }
 
-      sumColumn.textContent = sumColumnValue;
+        if (valuesColumnFolder) {
+          valuesColumnFolder.forEach((value) => {
+            sumColumnValue += parseInt(value.textContent);
+          });
+          sumColumn.textContent = sumColumnValue;
+        }
+
+        const sumRowAll = document.querySelector(`[id^="sum_m0_l${i - 1}"]`);
+        const resultRow = sumRowAll.closest("tr");
+        const resultValues = resultRow.querySelectorAll(`[id^="sum_m"]`);
+
+        let sumRowValue = 0;
+        resultValues.forEach((value, index) => {
+          if (index !== 0) {
+            sumRowValue += parseInt(value.textContent);
+          }
+        });
+        sumRowAll.textContent = sumRowValue;
+      }
     }
+    input.addEventListener("blur", function () {
+      if (changeName !== event.target.value) {
+        element.textContent = initText;
+      }
+    });
   });
-  // input.addEventListener("blur", function () {
-  //   element.textContent = initText;
-  // });
 }
 
 const table = document.createElement("table");
@@ -282,10 +324,12 @@ bodyHeadTitleArray.forEach((title, index) => {
   if (index === 0) {
     const th = document.createElement("th");
     th.textContent = title;
-    th.classList.add("bodyTitle");
+    th.classList.add("bodyTitleHead");
     const imgSort = document.createElement("img");
     imgSort.src = "./Icons/sort-descending.png";
     imgSort.classList.add("iconSort");
+
+    imgSort.addEventListener("click", sort);
     th.appendChild(imgSort);
     trBodyHead.appendChild(th);
   } else {
@@ -313,16 +357,56 @@ function renderData(data, folderName, body, level) {
       level === 0
         ? th.classList.add("bodyTitle")
         : th.classList.add("bodyNameCell");
+      th.id = `title_l${level}`;
+      const nameContainer = document.createElement("div");
+      nameContainer.classList.add("nameContainer");
+      nameContainer.id = "btn-hide";
+      nameContainer.setAttribute("onclick", "hide(event)");
+
+      const label = document.createElement("label");
+      label.style.cursor = "pointer";
+      label.textContent = element.name;
+
+      nameContainer.appendChild(label);
+      const iconsContainer = document.createElement("div");
+      iconsContainer.classList.add("iconsContainer");
+      const imgAddFile = document.createElement("img");
+      imgAddFile.src = "./Icons/plus.png";
+      imgAddFile.classList.add("iconAdd");
+
+      imgAddFile.addEventListener("mouseover", function () {
+        imgAddFile.style.background = "rgba(0, 0, 0, 0.1)";
+      });
+
+      imgAddFile.addEventListener("mouseout", function () {
+        imgAddFile.style.background = "none";
+      });
+
+      imgAddFile.setAttribute("onclick", `addFile(event, ${level})`);
+
+      const imgAddFolder = document.createElement("img");
+      imgAddFolder.src = "./Icons/folder.png";
+      imgAddFolder.classList.add("iconAdd");
+
+      imgAddFolder.addEventListener("mouseover", function () {
+        imgAddFolder.style.background = "rgba(0, 0, 0, 0.1)";
+      });
+
+      imgAddFolder.addEventListener("mouseout", function () {
+        imgAddFolder.style.background = "none";
+      });
+
+      iconsContainer.appendChild(imgAddFolder);
+      iconsContainer.appendChild(imgAddFile);
+
+      th.appendChild(nameContainer);
+      th.appendChild(iconsContainer);
+
       if (level > 0) {
         const imgHide = document.createElement("img");
         imgHide.src = "./Icons/mini-arrow.png";
         imgHide.id = "icon-hide";
         imgHide.classList.add("iconHide");
-
-        const nameContainer = document.createElement("div");
-        nameContainer.classList.add("nameContainer");
-        nameContainer.id = "btn-hide";
-        nameContainer.setAttribute("onclick", "hide(event)");
 
         nameContainer.addEventListener("click", () => {
           if (!isHide) {
@@ -336,51 +420,8 @@ function renderData(data, folderName, body, level) {
           }
         });
 
-        const label = document.createElement("label");
-        label.style.cursor = "pointer";
-        label.textContent = element.name;
-        nameContainer.appendChild(imgHide);
-        nameContainer.appendChild(label);
-
+        nameContainer.insertBefore(imgHide, nameContainer.firstChild);
         th.style.paddingLeft = level * 32 + "px";
-
-        const iconsContainer = document.createElement("div");
-        iconsContainer.classList.add("iconsContainer");
-        const imgAddFile = document.createElement("img");
-        imgAddFile.src = "./Icons/plus.png";
-        imgAddFile.classList.add("iconAdd");
-
-        imgAddFile.addEventListener("mouseover", function () {
-          imgAddFile.style.background = "rgba(0, 0, 0, 0.1)";
-        });
-
-        imgAddFile.addEventListener("mouseout", function () {
-          imgAddFile.style.background = "none";
-        });
-
-        imgAddFile.setAttribute("onclick", `addFile(event, ${level})`);
-
-        const imgAddFolder = document.createElement("img");
-        imgAddFolder.src = "./Icons/folder.png";
-        imgAddFolder.classList.add("iconAdd");
-
-        imgAddFolder.addEventListener("mouseover", function () {
-          imgAddFolder.style.background = "rgba(0, 0, 0, 0.1)";
-        });
-
-        imgAddFolder.addEventListener("mouseout", function () {
-          imgAddFolder.style.background = "none";
-        });
-
-        iconsContainer.appendChild(imgAddFolder);
-        iconsContainer.appendChild(imgAddFile);
-
-        th.appendChild(nameContainer);
-        th.appendChild(iconsContainer);
-      } else {
-        const label = document.createElement("label");
-        label.textContent = element.name;
-        th.appendChild(label);
       }
 
       tr.appendChild(th);
@@ -388,14 +429,12 @@ function renderData(data, folderName, body, level) {
       element.price.forEach((el, index) => {
         const td = document.createElement("td");
         td.id = `sum_m${index}_l${level}`;
-
         td.textContent = 0;
         if (level === 0) {
           td.classList.add("bodyTitleCell");
         } else {
           td.classList.add("bodyValueCell");
         }
-
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
@@ -410,6 +449,7 @@ function renderData(data, folderName, body, level) {
       label.textContent = element.name;
       th.appendChild(label);
       th.classList.add("bodyNameCell");
+      th.id = `title_l${level}`;
       th.style.paddingLeft = level * 32 + "px";
       const imgCancel = document.createElement("img");
       imgCancel.src = "./Icons/cancel.png";
@@ -428,8 +468,11 @@ function renderData(data, folderName, body, level) {
         const td = document.createElement("td");
         td.textContent = el;
         td.classList.add("bodyValueCell");
-        td.setAttribute("contenteditable", "true");
-        td.setAttribute("onclick", `change(event, ${index}, ${level})`);
+        if (index > 0) {
+          td.setAttribute("onclick", `change(event, ${index}, ${level})`);
+          td.style.cursor = "pointer";
+        }
+
         td.id = `el_m${index}_l${level}`;
         tr.appendChild(td);
       });
@@ -453,4 +496,3 @@ const tableContainer = document.getElementById("tableContainer");
 tableContainer.appendChild(table);
 
 renderData(dataInit, "", tbodyData, 0);
-document.addEventListener("keydown", (event) => handleTableChange(event));

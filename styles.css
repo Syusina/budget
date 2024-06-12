@@ -63,13 +63,31 @@ tbody tr {
   line-height: 17px;
 }
 
+.bodyTitleHead {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  width: 250px;
+  height: 38px;
+  text-align: center;
+  box-sizing: border-box;
+  background: #f7f7f7;
+  padding: 9px 10px 9px 32px;
+  line-height: 20px;
+  font-weight: 700;
+  border: 1px solid #eee;
+  border-top: 0;
+  border-left: 0;
+  white-space: nowrap;
+}
+
 .bodyTitle {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 250px;
   height: 38px;
-  text-align: left;
+  text-align: center;
   box-sizing: border-box;
   background: #f7f7f7;
   padding: 9px 10px 9px 32px;
@@ -144,8 +162,8 @@ tbody tr {
 
 .iconSort {
   cursor: pointer;
-  width: 13px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   padding: 4px;
 }
 
@@ -187,6 +205,7 @@ tbody tr {
 }
 
 .input {
+  background: none;
   outline: none;
   border: none;
 }

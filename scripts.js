@@ -1,5 +1,5 @@
 const headTitleArray = [
-  "Наименование",
+  "",
   "Итог",
   "Январь 2024",
   "Февраль 2024",
@@ -122,11 +122,14 @@ const dataInit = [
 
 function sort() {
   const element = document.querySelector(".iconSort");
+  const tooltip = element.closest("div").querySelector(".tooltip");
   const folderNames = Array.from(document.querySelectorAll("#title_l1"));
   if (element.src.endsWith("sort-descending.png")) {
     element.src = "./Icons/sort-alphabet.png";
+    tooltip.textContent = "Сортировка статей по алфавиту";
   } else {
     element.src = "./Icons/sort-descending.png";
+    tooltip.textContent = "Сортировка статей по убыванию итоговой суммы";
   }
 
   const sortedFolderNames = folderNames.sort((a, b) => {
@@ -207,7 +210,10 @@ function addFile(event, level) {
 
       for (let i = 0; i < 13; i += 1) {
         const valueCell = document.createElement("td");
-        valueCell.textContent = 0;
+        valueCell.textContent = Intl.NumberFormat("ru", {
+          style: "currency",
+          currency: "RUB",
+        }).format(0);
         valueCell.classList.add("bodyValueCell");
         if (i > 0) {
           valueCell.style.cursor = "pointer";
@@ -256,7 +262,10 @@ function change(event, month, level) {
     if (event.key === "Enter") {
       event.preventDefault();
       const newValue = event.target.value;
-      element.textContent = newValue;
+      element.textContent = Intl.NumberFormat("ru", {
+        style: "currency",
+        currency: "RUB",
+      }).format(newValue);
       changeName = newValue;
 
       let sumRowValue = 0;
@@ -265,7 +274,10 @@ function change(event, month, level) {
           sumRowValue += parseInt(value.textContent);
         }
       });
-      sumRow.textContent = sumRowValue;
+      sumRow.textContent = Intl.NumberFormat("ru", {
+        style: "currency",
+        currency: "RUB",
+      }).format(sumRowValue);
 
       for (let i = level; i > 0; i -= 1) {
         const sumColumn = document.querySelector(
@@ -280,7 +292,10 @@ function change(event, month, level) {
           valuesColumnFolder.forEach((value) => {
             sumColumnValue += parseInt(value.textContent);
           });
-          sumColumn.textContent = sumColumnValue;
+          sumColumn.textContent = Intl.NumberFormat("ru", {
+            style: "currency",
+            currency: "RUB",
+          }).format(sumColumnValue);
         }
 
         const sumRowAll = document.querySelector(`[id^="sum_m0_l${i - 1}"]`);
@@ -293,7 +308,10 @@ function change(event, month, level) {
             sumRowValue += parseInt(value.textContent);
           }
         });
-        sumRowAll.textContent = sumRowValue;
+        sumRowAll.textContent = Intl.NumberFormat("ru", {
+          style: "currency",
+          currency: "RUB",
+        }).format(sumRowValue);
       }
     }
     input.addEventListener("blur", function () {
@@ -331,12 +349,21 @@ bodyHeadTitleArray.forEach((title, index) => {
     const th = document.createElement("th");
     th.textContent = title;
     th.classList.add("bodyTitleHead");
+
+    const tooltipContainer = document.createElement("div");
+    tooltipContainer.classList.add("conTooltip");
+
+    const tooltip = document.createElement("div");
     const imgSort = document.createElement("img");
     imgSort.src = "./Icons/sort-descending.png";
     imgSort.classList.add("iconSort");
-
     imgSort.addEventListener("click", sort);
-    th.appendChild(imgSort);
+    tooltip.textContent = "Сортировка статей по убыванию итоговой суммы";
+    tooltip.classList.add("tooltip");
+
+    tooltipContainer.appendChild(imgSort);
+    tooltipContainer.appendChild(tooltip);
+    th.appendChild(tooltipContainer);
     trBodyHead.appendChild(th);
   } else {
     const td = document.createElement("td");
@@ -435,7 +462,10 @@ function renderData(data, folderName, body, level) {
       element.price.forEach((el, index) => {
         const td = document.createElement("td");
         td.id = `sum_m${index}_l${level}`;
-        td.textContent = 0;
+        td.textContent = Intl.NumberFormat("ru", {
+          style: "currency",
+          currency: "RUB",
+        }).format(0);
         if (level === 0) {
           td.classList.add("bodyTitleCell");
         } else {
@@ -472,7 +502,10 @@ function renderData(data, folderName, body, level) {
 
       element.price.forEach((el, index) => {
         const td = document.createElement("td");
-        td.textContent = el;
+        td.textContent = Intl.NumberFormat("ru", {
+          style: "currency",
+          currency: "RUB",
+        }).format(0);
         td.classList.add("bodyValueCell");
         if (index > 0) {
           td.setAttribute("onclick", `change(event, ${index}, ${level})`);

@@ -25,6 +25,7 @@ tbody tr {
   overflow: scroll;
   border: 1px solid #eee;
   border-radius: 4px;
+  z-index: 0;
 }
 
 .table {
@@ -162,7 +163,6 @@ tbody tr {
   cursor: pointer;
   width: 16px;
   height: 16px;
-  padding: 4px;
 }
 
 .iconAdd {
@@ -221,3 +221,57 @@ tbody tr {
   font-size: 14px;
   color: rgb(51, 51, 51, 0.5);
 }
+
+.conTooltip {
+  position: relative;
+  display: flex;
+  border-radius: 9px;
+  padding: 0 4px;
+  transition: all 0.3s ease-in-out;
+}
+
+.tooltip {
+  visibility: hidden;
+  position: absolute;
+  z-index: 1;
+  opacity: 0.5;
+  width: 145px;
+  padding: 4px 8px;
+  background: #333;
+  color: #fff;
+  bottom: 20px;
+  left: -67px;
+  right: 0;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 14px;
+  transform: translateY(2px);
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 3px rgba(56, 54, 54, 0.86);
+  white-space: normal;
+}
+
+.tooltip::after {
+  content: " ";
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 5px 0 5px;
+  border-color: #333 transparent transparent transparent;
+  position: absolute;
+  bottom: -5px;
+  left: 45%;
+}
+
+.conTooltip:hover .tooltip {
+  visibility: visible;
+  transform: translateY(-1px);
+  opacity: 1;
+  transition: 0.3s linear;
+}
+
+
+
+
+

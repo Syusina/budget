@@ -263,6 +263,7 @@ function addFile(event, level) {
   element.innerHTML = "";
   const input = document.createElement("input");
   input.classList.add("input");
+  input.style.paddingLeft = 32 * level + "px";
   input.placeholder = "Название статьи...";
   element.appendChild(input);
   input.focus();
@@ -272,12 +273,15 @@ function addFile(event, level) {
       event.preventDefault();
       const newCell = document.createElement("tr");
       newCell.classList.add("value");
-      const nameRow = event.target.value;
+      const label = document.createElement("label");
+      label.classList.add("labelName");
+      label.style.width = 208 - 32 * level + "px";
+      label.textContent = event.target.value;
       const newName = document.createElement("th");
       newName.classList.add("bodyNameCell");
       newName.id = `title_l${level + 1}`;
       newName.style.paddingLeft = (level + 1) * 32 + "px";
-      newName.textContent = nameRow;
+      newName.appendChild(label);
       const imgCancel = document.createElement("img");
       imgCancel.src = "./Icons/cancel.png";
       imgCancel.classList.add("iconCancel");
@@ -308,7 +312,34 @@ function addFile(event, level) {
         newCell.appendChild(valueCell);
       }
       if (event.target.value !== "") {
-        parent.appendChild(newCell);
+        const folderNames = Array.from(
+          parent.querySelectorAll(`#title_l${level + 1}`)
+        );
+        const fileNames = Array.from(
+          parent.querySelectorAll(`[id^="el_m0_l${level}`)
+        );
+        const allValues = [...fileNames, ...folderNames, newCell];
+        const sortedFolderNames = allValues.sort((a, b) => {
+          const nameA = a.textContent.toLowerCase();
+          const nameB = b.textContent.toLowerCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          return 0;
+        });
+
+        sortedFolderNames.forEach((folder) => {
+          if (folder.closest("tr").className !== "value") {
+            const element = folder.closest("tbody");
+            parent.appendChild(element);
+          } else {
+            const parentTr = folder.closest("tr");
+            parent.appendChild(parentTr);
+          }
+        });
       }
       element.innerHTML = initText;
     }
@@ -321,11 +352,12 @@ function addFolder(event, level) {
   const parent = event.target.closest("tbody");
 
   const tr = document.createElement("tr");
-  tr.classList.add(`nameFolder_${level}`);
+  tr.classList.add(`nameFolder_${level + 1}`);
   const initText = element.innerHTML;
   element.innerHTML = "";
   const input = document.createElement("input");
   input.classList.add("input");
+  input.style.paddingLeft = 32 * level + "px";
   input.placeholder = "Название группы...";
   element.appendChild(input);
   input.focus();
@@ -336,7 +368,7 @@ function addFolder(event, level) {
       let isHide = false;
       const newCell = document.createElement("tbody");
       const nameRow = event.target.value;
-      newCell.id = `body_${level}_${nameRow}`;
+      newCell.id = `body_${level + 1}_${nameRow}`;
       const newName = document.createElement("th");
       newName.classList.add("bodyNameCell");
       newName.id = `title_l${level + 1}`;
@@ -345,10 +377,12 @@ function addFolder(event, level) {
       nameContainer.classList.add("nameContainer");
       nameContainer.id = "btn-hide";
       nameContainer.setAttribute("onclick", "hide(event)");
-      nameContainer.style.paddingLeft = level * 32 + "px";
+      nameContainer.style.paddingLeft = 32 + "px";
 
       const label = document.createElement("label");
       label.style.cursor = "pointer";
+      label.classList.add("labelName");
+      label.style.width = 250 - 32 - 8 - 48 - 32 * (level + 1) + "px";
       label.textContent = nameRow;
 
       nameContainer.appendChild(label);
@@ -387,27 +421,25 @@ function addFolder(event, level) {
       newName.appendChild(nameContainer);
       newName.appendChild(iconsContainer);
 
-      if (level > 0) {
-        const imgHide = document.createElement("img");
-        imgHide.src = "./Icons/mini-arrow.png";
-        imgHide.id = "icon-hide";
-        imgHide.classList.add("iconHide");
+      const imgHide = document.createElement("img");
+      imgHide.src = "./Icons/mini-arrow.png";
+      imgHide.id = "icon-hide";
+      imgHide.classList.add("iconHide");
 
-        nameContainer.addEventListener("click", () => {
-          if (!isHide) {
-            imgHide.style.transition = "transform 0.3s ease-in-out";
-            imgHide.style.transform = "rotate(90deg)";
-            isHide = true;
-          } else {
-            imgHide.style.transition = "transform 0.3s ease-in-out";
-            imgHide.style.transform = "rotate(0deg)";
-            isHide = false;
-          }
-        });
+      nameContainer.addEventListener("click", () => {
+        if (!isHide) {
+          imgHide.style.transition = "transform 0.3s ease-in-out";
+          imgHide.style.transform = "rotate(90deg)";
+          isHide = true;
+        } else {
+          imgHide.style.transition = "transform 0.3s ease-in-out";
+          imgHide.style.transform = "rotate(0deg)";
+          isHide = false;
+        }
+      });
 
-        nameContainer.insertBefore(imgHide, nameContainer.firstChild);
-        newName.style.paddingLeft = level * 32 + "px";
-      }
+      nameContainer.insertBefore(imgHide, nameContainer.firstChild);
+      newName.style.paddingLeft = level * 32 + "px";
 
       tr.appendChild(newName);
 
@@ -421,7 +453,33 @@ function addFolder(event, level) {
         tr.appendChild(valueCell);
       }
       if (event.target.value !== "") {
-        parent.appendChild(newCell);
+        const folderNames = Array.from(
+          document.querySelectorAll(`#title_l${level + 1}`)
+        );
+
+        const fileNames = Array.from(
+          document.querySelectorAll(`#title_l${level + 1}`)
+        );
+        const allValues = [...fileNames, ...folderNames, newCell];
+        const sortedFolderNames = allValues.sort((a, b) => {
+          const nameA = a.textContent.toLowerCase();
+          const nameB = b.textContent.toLowerCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          return 0;
+        });
+        sortedFolderNames.forEach((folder) => {
+          if (folder.closest("tr")) {
+            const parentTr = folder.closest("tr");
+            parent.appendChild(parentTr);
+          } else {
+            parent.appendChild(folder);
+          }
+        });
       }
       element.innerHTML = initText;
     }

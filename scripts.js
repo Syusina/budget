@@ -208,7 +208,7 @@ function sort() {
     });
 
     sortedFolderNamesIncome.forEach((folder) => {
-      if (folder.closest("tr").className !== "value") {
+      if (!folder.closest("tr").className.includes("value")) {
         const element = folder.closest("tbody");
         income.appendChild(element);
       } else {
@@ -217,7 +217,7 @@ function sort() {
       }
     });
     sortedFolderNamesExpenses.forEach((folder) => {
-      if (folder.closest("tr").className !== "value") {
+      if (!folder.closest("tr").className.includes("value")) {
         const element = folder.closest("tbody");
         expenses.appendChild(element);
       } else {
@@ -256,7 +256,7 @@ function sort() {
     });
 
     sortedFolderNamesIncome.forEach((folder) => {
-      if (folder.closest("tr").className !== "value") {
+      if (!folder.closest("tr").className.includes("value")) {
         const element = folder.closest("tbody");
         income.appendChild(element);
       } else {
@@ -277,7 +277,7 @@ function sort() {
     });
 
     sortedFolderNamesExpenses.forEach((folder) => {
-      if (folder.closest("tr").className !== "value") {
+      if (!folder.closest("tr").className.includes("value")) {
         const element = folder.closest("tbody");
         expenses.appendChild(element);
       } else {
@@ -359,7 +359,7 @@ function addFile(event, level) {
     if (event.key === "Enter") {
       event.preventDefault();
       const newCell = document.createElement("tr");
-      newCell.classList.add("value");
+      newCell.classList.add(`value_${level}`);
       const label = document.createElement("label");
       label.classList.add("labelName");
       label.style.width = 208 - 32 * level + "px";
@@ -419,7 +419,7 @@ function addFile(event, level) {
         });
 
         sortedFolderNames.forEach((folder) => {
-          if (folder.closest("tr").className !== "value") {
+          if (!folder.closest("tr").className.includes("value")) {
             const element = folder.closest("tbody");
             parent.appendChild(element);
           } else {
@@ -444,7 +444,7 @@ function addFolder(event, level) {
   element.innerHTML = "";
   const input = document.createElement("input");
   input.classList.add("input");
-  input.style.paddingLeft = 32 * level + "px";
+  //input.style.paddingLeft = 32 * level + "px";
   input.placeholder = "Название группы...";
   element.appendChild(input);
   input.focus();
@@ -540,13 +540,11 @@ function addFolder(event, level) {
         tr.appendChild(valueCell);
       }
       if (event.target.value !== "") {
-        const folderNames = Array.from(
-          document.querySelectorAll(`[id^="title_l${level}_"]`)
-        );
-
         const fileNames = Array.from(
-          document.querySelectorAll(`[id^="title_l${level + 1}_"]`)
+          parent.querySelectorAll(`.value_${level + 1}`)
         );
+        const folderNames = Array.from(parent.querySelectorAll(`[id^="body"]`));
+
         const allValues = [...fileNames, ...folderNames, newCell];
         const sortedFolderNames = allValues.sort((a, b) => {
           const nameA = a.textContent.toLowerCase();
@@ -564,7 +562,8 @@ function addFolder(event, level) {
             const parentTr = folder.closest("tr");
             parent.appendChild(parentTr);
           } else {
-            parent.appendChild(folder);
+            const element = folder.closest("tbody");
+            parent.appendChild(element);
           }
         });
       }
@@ -834,7 +833,7 @@ function renderData(data, folderName, body, level) {
       body.appendChild(tbody);
     } else {
       const tr = document.createElement("tr");
-      tr.classList.add("value");
+      tr.classList.add(`value_${level}`);
       const th = document.createElement("th");
       const label = document.createElement("label");
       label.classList.add("labelBodyName");

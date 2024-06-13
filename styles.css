@@ -39,7 +39,7 @@ tbody tr {
 
 #tableContainer {
   margin: 20px;
-  height: 500px;
+  height: 600px;
   overflow: scroll;
   border: 1px solid #eee;
   border-radius: 4px;
@@ -118,7 +118,9 @@ tbody tr {
 
 .bodyTitleCell {
   box-sizing: border-box;
+  max-width: 130px;
   width: 130px;
+  padding: 5px 8px;
   background: #f7f7f7;
   text-align: center;
   border: 1px solid #eee;
@@ -127,6 +129,9 @@ tbody tr {
   font-weight: 700;
   line-height: 20px;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bodyNameCell {
@@ -168,7 +173,9 @@ tbody tr {
 
 .bodyValueCell {
   box-sizing: border-box;
+  max-width: 130px;
   width: 130px;
+  padding: 5px 8px;
   background: #fff;
   text-align: center;
   border: 1px solid #eee;
@@ -178,6 +185,9 @@ tbody tr {
   line-height: 20px;
   font-size: 14px;
   padding: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .iconHide {

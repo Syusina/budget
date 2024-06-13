@@ -84,45 +84,73 @@ const dataInitExpenses = [
   {
     name: "Бюджет расходов",
     type: "FOLDER",
-    price: [4000000, 4000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    price: [-73000000, -73000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     child: [
       {
-        name: "Разработка проекта",
-        type: "FILE",
-        price: [2000000, 2000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      },
-      {
-        name: "Ремонтные работы",
-        type: "FILE",
-        price: [1500000, 1500000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      },
-      {
-        name: "Услуги",
+        name: "Материалы",
         type: "FOLDER",
-        price: [500000, 500000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        price: [-300000, -300000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         child: [
           {
-            name: "Аудит и консалтинг",
-            type: "FILE",
-            price: [250000, 250000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            name: "Мебель",
+            type: "FOLDER",
+            price: [-180000, -180000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            child: [
+              {
+                name: "Дерево",
+                type: "FILE",
+                price: [-100000, -100000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              },
+              {
+                name: "Стекло",
+                type: "FILE",
+                price: [-50000, -500000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              },
+              {
+                name: "Фурнитура",
+                type: "FILE",
+                price: [-30000, -30000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              },
+            ],
           },
           {
-            name: "Работа электрика",
-            type: "FILE",
-            price: [200000, 200000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          },
-
-          {
-            name: "Малярные работы",
-            type: "FILE",
-            price: [50000, 50000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          },
-          {
-            name: "Доставка",
-            type: "FILE",
-            price: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            name: "Химия",
+            type: "FOLDER",
+            price: [-12000000, -12000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            child: [
+              {
+                name: "Краска",
+                type: "FILE",
+                price: [-700000, -700000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              },
+              {
+                name: "Лак",
+                type: "FILE",
+                price: [-500000, -500000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              },
+            ],
           },
         ],
+      },
+      {
+        name: "Аренда инструмента",
+        type: "FILE",
+        price: [-2000000, -2000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      },
+      {
+        name: "Аренда офиса",
+        type: "FILE",
+        price: [-2000000, -2000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      },
+      {
+        name: "Коммунальные платежи",
+        type: "FILE",
+        price: [-30000, -30000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      },
+      {
+        name: "Транспорт",
+        type: "FILE",
+        price: [-150000, -150000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       },
     ],
   },
@@ -142,12 +170,20 @@ function convertToCurrency(value) {
 function sort() {
   const element = document.querySelector(".iconSort");
   const tooltip = element.closest("div").querySelector(".tooltip");
+  const income = document.getElementById("body_0_Бюджет доходов");
+  const expenses = document.getElementById("body_0_Бюджет расходов");
 
   if (element.src.endsWith("sort-descending.png")) {
     element.src = "./Icons/sort-alphabet.png";
     tooltip.textContent = "Сортировка статей по алфавиту";
-    const folderNames = Array.from(document.querySelectorAll("#title_l1"));
-    const sortedFolderNames = folderNames.sort((a, b) => {
+    const folderNamesIncome = Array.from(
+      income.querySelectorAll(`[id^="title_l1"]`)
+    );
+    const folderNamesExpenses = Array.from(
+      expenses.querySelectorAll(`[id^="title_l1"]`)
+    );
+
+    const sortedFolderNamesIncome = folderNamesIncome.sort((a, b) => {
       const nameA = a.textContent.toLowerCase();
       const nameB = b.textContent.toLowerCase();
       if (nameA < nameB) {
@@ -159,25 +195,55 @@ function sort() {
       return 0;
     });
 
-    const tbody = document.querySelector(`[id^="body_0"]`);
-    sortedFolderNames.forEach((folder) => {
+    const sortedFolderNamesExpenses = folderNamesExpenses.sort((a, b) => {
+      const nameA = a.textContent.toLowerCase();
+      const nameB = b.textContent.toLowerCase();
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    });
+
+    sortedFolderNamesIncome.forEach((folder) => {
       if (folder.closest("tr").className !== "value") {
         const element = folder.closest("tbody");
-        tbody.appendChild(element);
+        income.appendChild(element);
       } else {
         const parentTr = folder.closest("tr");
-        tbody.appendChild(parentTr);
+        income.appendChild(parentTr);
+      }
+    });
+    sortedFolderNamesExpenses.forEach((folder) => {
+      if (folder.closest("tr").className !== "value") {
+        const element = folder.closest("tbody");
+        expenses.appendChild(element);
+      } else {
+        const parentTr = folder.closest("tr");
+        expenses.appendChild(parentTr);
       }
     });
   } else {
     element.src = "./Icons/sort-descending.png";
     tooltip.textContent = "Сортировка статей по убыванию итоговой суммы";
-    const folderValues = Array.from(
-      document.querySelectorAll(`[id^="sum_m0_l1`)
+    const folderValuesInocome = Array.from(
+      income.querySelectorAll(`[id^="sum_m0_l1`)
     );
-    const fileValues = Array.from(document.querySelectorAll(`[id^="el_m0_l1`));
-    const allValues = [...fileValues, ...folderValues];
-    const sortedFolderNames = allValues.sort((a, b) => {
+    const fileValuesIncome = Array.from(
+      income.querySelectorAll(`[id^="el_m0_l1`)
+    );
+    const allValuesIncome = [...fileValuesIncome, ...folderValuesInocome];
+
+    const folderValuesIExpenses = Array.from(
+      expenses.querySelectorAll(`[id^="sum_m0_l1`)
+    );
+    const fileValuesExpenses = Array.from(
+      expenses.querySelectorAll(`[id^="el_m0_l1`)
+    );
+    const allValuesExpenses = [...fileValuesExpenses, ...folderValuesIExpenses];
+    const sortedFolderNamesIncome = allValuesIncome.sort((a, b) => {
       const nameA = a.textContent.toLowerCase();
       const nameB = b.textContent.toLowerCase();
       if (nameA < nameB) {
@@ -188,14 +254,35 @@ function sort() {
       }
       return 0;
     });
-    const tbody = document.querySelector(`[id^="body_0"]`);
-    sortedFolderNames.forEach((folder) => {
+
+    sortedFolderNamesIncome.forEach((folder) => {
       if (folder.closest("tr").className !== "value") {
         const element = folder.closest("tbody");
-        tbody.appendChild(element);
+        income.appendChild(element);
       } else {
         const parentTr = folder.closest("tr");
-        tbody.appendChild(parentTr);
+        income.appendChild(parentTr);
+      }
+    });
+    const sortedFolderNamesExpenses = allValuesExpenses.sort((a, b) => {
+      const nameA = a.textContent.toLowerCase();
+      const nameB = b.textContent.toLowerCase();
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      return 0;
+    });
+
+    sortedFolderNamesExpenses.forEach((folder) => {
+      if (folder.closest("tr").className !== "value") {
+        const element = folder.closest("tbody");
+        expenses.appendChild(element);
+      } else {
+        const parentTr = folder.closest("tr");
+        expenses.appendChild(parentTr);
       }
     });
   }
@@ -279,7 +366,7 @@ function addFile(event, level) {
       label.textContent = event.target.value;
       const newName = document.createElement("th");
       newName.classList.add("bodyNameCell");
-      newName.id = `title_l${level + 1}`;
+      newName.id = `title_l${level + 1}_ ${event.target.value}`;
       newName.style.paddingLeft = (level + 1) * 32 + "px";
       newName.appendChild(label);
       const imgCancel = document.createElement("img");
@@ -313,7 +400,7 @@ function addFile(event, level) {
       }
       if (event.target.value !== "") {
         const folderNames = Array.from(
-          parent.querySelectorAll(`#title_l${level + 1}`)
+          parent.querySelectorAll(`[id^="title_l${level + 1}`)
         );
         const fileNames = Array.from(
           parent.querySelectorAll(`[id^="el_m0_l${level}`)
@@ -371,7 +458,7 @@ function addFolder(event, level) {
       newCell.id = `body_${level + 1}_${nameRow}`;
       const newName = document.createElement("th");
       newName.classList.add("bodyNameCell");
-      newName.id = `title_l${level + 1}`;
+      newName.id = `title_l${level + 1}_${nameRow}`;
 
       const nameContainer = document.createElement("div");
       nameContainer.classList.add("nameContainer");
@@ -454,11 +541,11 @@ function addFolder(event, level) {
       }
       if (event.target.value !== "") {
         const folderNames = Array.from(
-          document.querySelectorAll(`#title_l${level + 1}`)
+          document.querySelectorAll(`[id^="title_l${level}_"]`)
         );
 
         const fileNames = Array.from(
-          document.querySelectorAll(`#title_l${level + 1}`)
+          document.querySelectorAll(`[id^="title_l${level + 1}_"]`)
         );
         const allValues = [...fileNames, ...folderNames, newCell];
         const sortedFolderNames = allValues.sort((a, b) => {
@@ -559,6 +646,7 @@ function change(event, month, level) {
         });
         sumRowAll.textContent = convertToCurrency(sumRowValue);
       }
+      renderBalance();
     }
 
     input.addEventListener("blur", function () {
@@ -571,6 +659,13 @@ function change(event, month, level) {
 
 const table = document.createElement("table");
 const thead = document.createElement("thead");
+const tbodyIncome = document.createElement("tbody");
+tbodyIncome.id = "tbodyDataIncome";
+const tbodyExpenses = document.createElement("tbody");
+tbodyExpenses.id = "tbodyDataExpenses";
+const tbodyBalance = document.createElement("tbody");
+tbodyBalance.id = "tbodyDataBalance";
+
 const trTitleHead = document.createElement("tr");
 trTitleHead.id = "titleHead";
 
@@ -622,8 +717,22 @@ bodyHeadTitleArray.forEach((title, index) => {
   tbodyHead.appendChild(tbodyName);
 });
 
-const tbodyData = document.createElement("tbody");
-tbodyData.id = "tbodyData";
+const trBalance = document.createElement("tr");
+for (let i = 0; i < 14; i += 1) {
+  if (i === 0) {
+    const th = document.createElement("th");
+    th.textContent = "Сальдо";
+    th.classList.add("bodyTitleHead");
+    trBalance.appendChild(th);
+  } else {
+    const td = document.createElement("td");
+    td.textContent = convertToCurrency(0);
+    td.classList.add("bodyTitleCell");
+    td.id = `balance_${i}`;
+    trBalance.appendChild(td);
+  }
+}
+tbodyBalance.appendChild(trBalance);
 
 function renderData(data, folderName, body, level) {
   data.forEach((element, index) => {
@@ -637,11 +746,13 @@ function renderData(data, folderName, body, level) {
       level === 0
         ? th.classList.add("bodyTitle")
         : th.classList.add("bodyNameCell");
-      th.id = `title_l${level}`;
+      th.id = `title_l${level}_${element.name}`;
       const nameContainer = document.createElement("div");
       nameContainer.classList.add("nameContainer");
       nameContainer.id = "btn-hide";
-      nameContainer.setAttribute("onclick", "hide(event)");
+      if (level > 0) {
+        nameContainer.setAttribute("onclick", "hide(event)");
+      }
 
       const label = document.createElement("label");
       label.style.cursor = "pointer";
@@ -713,13 +824,13 @@ function renderData(data, folderName, body, level) {
         td.textContent = convertToCurrency(el);
         if (level === 0) {
           td.classList.add("bodyTitleCell");
+          td.setAttribute("data-value", `result_${index}`);
         } else {
           td.classList.add("bodyValueCell");
         }
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
-
       body.appendChild(tbody);
     } else {
       const tr = document.createElement("tr");
@@ -730,7 +841,7 @@ function renderData(data, folderName, body, level) {
       label.textContent = element.name;
       th.appendChild(label);
       th.classList.add("bodyNameCell");
-      th.id = `title_l${level}`;
+      th.id = `title_l${level}_${element.name}`;
       th.style.paddingLeft = level * 32 + "px";
       const imgCancel = document.createElement("img");
       imgCancel.src = "./Icons/cancel.png";
@@ -768,12 +879,29 @@ function renderData(data, folderName, body, level) {
   });
 }
 
+function renderBalance() {
+  const tbody = document.getElementById("tbodyDataBalance");
+  for (let i = 1; i < 13; i += 1) {
+    const result = tbody.querySelector(`[id^="balance_${i}"]`);
+    const values = document.querySelectorAll(`[data-value="result_${i - 1}"]`);
+    let sum = 0;
+    values.forEach((value) => (sum += convertToNumber(value.textContent)));
+    result.textContent = convertToCurrency(sum);
+  }
+}
+
 table.appendChild(tbodyTitle);
 table.appendChild(tbodyHead);
-table.appendChild(tbodyData);
+table.appendChild(tbodyIncome);
+table.appendChild(tbodyExpenses);
+
+table.appendChild(tbodyBalance);
 table.classList.add("table");
 
 const tableContainer = document.getElementById("tableContainer");
 tableContainer.appendChild(table);
 
-renderData(dataInitIncome, "", tbodyData, 0);
+renderData(dataInitIncome, "", tbodyIncome, 0);
+renderData(dataInitExpenses, "", tbodyExpenses, 0);
+
+renderBalance();

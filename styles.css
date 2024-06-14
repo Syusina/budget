@@ -42,9 +42,9 @@ tbody tr {
 }
 
 .row.hide {
-  position: absolute;
-  top: -100%;
-  transition: all 0.3s ease-in-out;
+  display: none;
+  /* opacity: 0;
+  transition: opacity 0.5s, top 1s; */
 }
 
 #tableContainer {

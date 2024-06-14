@@ -290,6 +290,7 @@ function sort() {
 
 function hide(event) {
   const parent = event.target.closest("tbody");
+  const height = parent.clientHeight;
   const elements = parent.querySelectorAll(".row");
 
   elements.forEach((el, index) => {

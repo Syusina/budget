@@ -25,6 +25,10 @@ body {
   margin: 0;
 }
 
+h2 {
+  margin: 30px 0 0 30px;
+}
+
 th:focus {
   outline: none;
 }
@@ -33,17 +37,39 @@ tbody tr {
   display: inline-table;
 }
 
-.hide {
-  display: none;
+.row {
+  transition: all 0.3s ease-in-out;
+}
+
+.row.hide {
+  position: absolute;
+  top: -100%;
+  transition: all 0.3s ease-in-out;
 }
 
 #tableContainer {
-  margin: 20px;
+  position: relative;
+  margin: 30px;
   height: 600px;
   overflow: scroll;
   border: 1px solid #eee;
   border-radius: 4px;
   z-index: 0;
+}
+
+#titleHead {
+  position: sticky;
+  top: 0;
+}
+
+#bodyHead {
+  position: sticky;
+  top: 45px;
+}
+
+#tbodyDataBalance {
+  position: sticky;
+  bottom: 0;
 }
 
 .table {

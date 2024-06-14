@@ -208,7 +208,7 @@ function sort() {
     });
 
     sortedFolderNamesIncome.forEach((folder) => {
-      if (!folder.closest("tr").className.includes("value")) {
+      if (!folder.closest("tr").id.includes("value")) {
         const element = folder.closest("tbody");
         income.appendChild(element);
       } else {
@@ -217,7 +217,7 @@ function sort() {
       }
     });
     sortedFolderNamesExpenses.forEach((folder) => {
-      if (!folder.closest("tr").className.includes("value")) {
+      if (!folder.closest("tr").id.includes("value")) {
         const element = folder.closest("tbody");
         expenses.appendChild(element);
       } else {
@@ -256,7 +256,7 @@ function sort() {
     });
 
     sortedFolderNamesIncome.forEach((folder) => {
-      if (!folder.closest("tr").className.includes("value")) {
+      if (!folder.closest("tr").id.includes("value")) {
         const element = folder.closest("tbody");
         income.appendChild(element);
       } else {
@@ -277,7 +277,7 @@ function sort() {
     });
 
     sortedFolderNamesExpenses.forEach((folder) => {
-      if (!folder.closest("tr").className.includes("value")) {
+      if (!folder.closest("tr").id.includes("value")) {
         const element = folder.closest("tbody");
         expenses.appendChild(element);
       } else {
@@ -290,11 +290,10 @@ function sort() {
 
 function hide(event) {
   const parent = event.target.closest("tbody");
-  const array = Array.from(parent.children);
-  array.forEach((el, index) => {
-    if (index !== 0) {
-      el.classList.toggle("hide");
-    }
+  const elements = parent.querySelectorAll(".row");
+
+  elements.forEach((el, index) => {
+    el.classList.toggle("hide");
   });
 }
 
@@ -350,7 +349,6 @@ function addFile(event, level) {
   element.innerHTML = "";
   const input = document.createElement("input");
   input.classList.add("input");
-  input.style.paddingLeft = 32 * level + "px";
   input.placeholder = "Название статьи...";
   element.appendChild(input);
   input.focus();
@@ -359,7 +357,8 @@ function addFile(event, level) {
     if (event.key === "Enter") {
       event.preventDefault();
       const newCell = document.createElement("tr");
-      newCell.classList.add(`value_${level}`);
+      newCell.id = `value_${level}`;
+      newCell.classList.add("row");
       const label = document.createElement("label");
       label.classList.add("labelName");
       label.style.width = 208 - 32 * level + "px";
@@ -419,7 +418,7 @@ function addFile(event, level) {
         });
 
         sortedFolderNames.forEach((folder) => {
-          if (!folder.closest("tr").className.includes("value")) {
+          if (!folder.closest("tr").id.includes("value")) {
             const element = folder.closest("tbody");
             parent.appendChild(element);
           } else {
@@ -444,7 +443,6 @@ function addFolder(event, level) {
   element.innerHTML = "";
   const input = document.createElement("input");
   input.classList.add("input");
-  //input.style.paddingLeft = 32 * level + "px";
   input.placeholder = "Название группы...";
   element.appendChild(input);
   input.focus();
@@ -575,7 +573,7 @@ function addFolder(event, level) {
 function change(event, month, level) {
   const element = event.target.closest("td");
   const parent = element.closest("tr");
-  const parentBody = parent.closest("tbody");
+  const parentBody = parent.closest(`[id^="body_0"]`);
   const sumRow = parent.querySelector(`[id^="el_m0_l${level}"]`);
 
   const valuesRow = parent.querySelectorAll("td");
@@ -618,7 +616,7 @@ function change(event, month, level) {
       sumRow.textContent = convertToCurrency(sumRowValue);
 
       for (let i = level; i > 0; i -= 1) {
-        const sumColumn = document.querySelector(
+        const sumColumn = parentBody.querySelector(
           `[id^="sum_m${month}_l${i - 1}"]`
         );
         let sumColumnValue = 0;
@@ -633,7 +631,7 @@ function change(event, month, level) {
           sumColumn.textContent = convertToCurrency(sumColumnValue);
         }
 
-        const sumRowAll = document.querySelector(`[id^="sum_m0_l${i - 1}"]`);
+        const sumRowAll = parentBody.querySelector(`[id^="sum_m0_l${i - 1}"]`);
         const resultRow = sumRowAll.closest("tr");
         const resultValues = resultRow.querySelectorAll(`[id^="sum_m"]`);
 
@@ -669,6 +667,7 @@ const trTitleHead = document.createElement("tr");
 trTitleHead.id = "titleHead";
 
 const tbodyTitle = document.createElement("tbody");
+tbodyTitle.id = "titleHead";
 headTitleArray.forEach((title, index) => {
   const th = document.createElement("th");
   th.textContent = title;
@@ -717,6 +716,8 @@ bodyHeadTitleArray.forEach((title, index) => {
 });
 
 const trBalance = document.createElement("tr");
+trBalance.style.borderTop = "1px solid #eee";
+trBalance.style.borderRadius = "3px";
 for (let i = 0; i < 14; i += 1) {
   if (i === 0) {
     const th = document.createElement("th");
@@ -833,7 +834,8 @@ function renderData(data, folderName, body, level) {
       body.appendChild(tbody);
     } else {
       const tr = document.createElement("tr");
-      tr.classList.add(`value_${level}`);
+      tr.id = `value_${level}`;
+      tr.classList.add("row");
       const th = document.createElement("th");
       const label = document.createElement("label");
       label.classList.add("labelBodyName");
@@ -902,5 +904,4 @@ tableContainer.appendChild(table);
 
 renderData(dataInitIncome, "", tbodyIncome, 0);
 renderData(dataInitExpenses, "", tbodyExpenses, 0);
-
 renderBalance();

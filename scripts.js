@@ -289,13 +289,13 @@ function sort() {
 }
 
 function hide(event) {
-  const parent = event.target.closest("tbody");
-  const height = parent.clientHeight;
-  const elements = parent.querySelectorAll(".row");
+  const element = event.target.closest("tr");
+  element.style.position = "relative";
+  const siblings = Array.from(element.parentNode.children).filter(child => child !== element);
 
-  elements.forEach((el, index) => {
+  siblings.forEach((el) => {
     el.classList.toggle("hide");
-  });
+  })
 }
 
 function deleteRow(event, level) {
@@ -345,6 +345,7 @@ function deleteRow(event, level) {
 function addFile(event, level) {
   event.target.style.background = "none";
   const element = event.target.closest("th");
+  element.style.paddingLeft = "32px";
   const parent = event.target.closest("tbody");
   const initText = element.innerHTML;
   element.innerHTML = "";
@@ -428,16 +429,21 @@ function addFile(event, level) {
           }
         });
       }
-      element.innerHTML = initText;
+     input.blur();
     }
   });
+  input.addEventListener('blur', function() {
+    if (!element.textContent) {
+      element.innerHTML = initText;
+    }
+  })
 }
 
 function addFolder(event, level) {
   event.target.style.background = "none";
   const element = event.target.closest("th");
   const parent = event.target.closest("tbody");
-
+  element.style.paddingLeft = "32px";
   const tr = document.createElement("tr");
   tr.classList.add(`nameFolder_${level + 1}`);
   const initText = element.innerHTML;
@@ -458,7 +464,6 @@ function addFolder(event, level) {
       const newName = document.createElement("th");
       newName.classList.add("bodyNameCell");
       newName.id = `title_l${level + 1}_${nameRow}`;
-
       const nameContainer = document.createElement("div");
       nameContainer.classList.add("nameContainer");
       nameContainer.id = "btn-hide";
@@ -569,6 +574,11 @@ function addFolder(event, level) {
       element.innerHTML = initText;
     }
   });
+  input.addEventListener('blur', function() {
+    if (!element.textContent) {
+      element.innerHTML = initText;
+    }
+  })
 }
 
 function change(event, month, level) {

@@ -63,16 +63,19 @@ tbody tr {
 #titleHead {
   position: sticky;
   top: 0;
+  z-index: 10;
 }
 
 #bodyHead {
   position: sticky;
   top: 45px;
+  z-index: 10;
 }
 
 #tbodyDataBalance {
   position: sticky;
   bottom: 0;
+  z-index: 10;
 }
 
 .table {
@@ -217,10 +220,6 @@ tbody tr {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.nameFolder {
-  position: relative;
 }
 
 .iconHide {

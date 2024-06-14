@@ -596,6 +596,7 @@ function change(event, month, level) {
 
   element.appendChild(input);
   input.focus();
+
   input.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -646,13 +647,13 @@ function change(event, month, level) {
       }
       renderBalance();
     }
-
-    input.addEventListener("blur", function () {
-      if (convertToNumber(changeName) !== event.target.value) {
-        element.textContent = initText;
-      }
-    });
   });
+  
+  input.addEventListener('blur', function() {
+    if (!element.textContent) {
+      element.textContent = initText;
+    }
+  })
 }
 
 const table = document.createElement("table");
